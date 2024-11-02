@@ -8,7 +8,7 @@ export default function AboutUs() {
         // Fetching data from Strapi's About Us API
         const fetchAboutData = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/about-us`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us`);
                 const data = await response.json();
                 setAboutData(data.data);
                 console.log(data)

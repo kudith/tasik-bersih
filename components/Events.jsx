@@ -1,5 +1,8 @@
-"use client";
-import {useState, useEffect} from "react";
+"use client"
+import * as React from "react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
     Carousel,
     CarouselContent,
@@ -8,21 +11,20 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 
-const EventCarousel = () => {
+export function EventCarousel() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch event data from Strapi
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/events-api`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api?populate=*`);
                 const data = await response.json();
                 setEvents(data.data);
                 setLoading(false);
-                console.log(data.data)
+                console.log(data.data);
             } catch (error) {
                 console.error("Error fetching events:", error);
                 setLoading(false);
@@ -31,58 +33,67 @@ const EventCarousel = () => {
         fetchEvents();
     }, []);
 
-    if (loading) return <p>Loading events...</p>;
-    if (!events.length) return <p>No events available.</p>;
+    if (loading) return <p className="text-center">Loading events...</p>;
+    if (!events.length) return <p className="text-center">No events available.</p>;
 
     return (
-        <Carousel
-            className="relative w-full overflow-hidden bg-gray-100 shadow-lg rounded-md">
-            <CarouselContent className="flex">
-                {events.map((event, index) => (
-                    <CarouselItem key={event.id}
-                                  className="flex-shrink-0 w-full">
-                        <motion.div
-                            className="p-6 md:p-10 flex flex-col md:flex-row bg-white rounded-lg shadow-lg space-y-4 md:space-y-0 md:space-x-8"
-                            initial={{opacity: 0, scale: 0.95}}
-                            animate={{opacity: 1, scale: 1}}
-                            transition={{duration: 0.5, delay: index * 0.1}}
-                        >
-                            <Image
-                                src={event.event_img}
-                                alt={event.event_name}
-                                width={500}
-                                height={300}
-                                className="rounded-lg object-cover w-full h-48 md:w-1/2 md:h-auto"
-                            />
-                            <div
-                                className="flex flex-col justify-between w-full">
-                                <h3 className="text-xl font-semibold text-primary">{event.event_name}</h3>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    <strong>Location:</strong> {event.location} | <strong>Date:</strong>{" "}
-                                    {new Date(event.date).toLocaleDateString()}
-                                </p>
-                                <p className="mt-2 text-gray-700">{event.description}</p>
-                                <button
-                                    className="mt-4 self-start px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-md hover:bg-blue-700">
-                                    Learn More
-                                </button>
-                            </div>
-                        </motion.div>
-                    </CarouselItem>
-                ))}
-            </CarouselContent>
-            <CarouselPrevious
-                className="absolute top-1/2 left-0 p-2 transform -translate-y-1/2 text-gray-700 bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-200">
-                <span className="sr-only">Previous</span>
-                &#9664;
-            </CarouselPrevious>
-            <CarouselNext
-                className="absolute top-1/2 right-0 p-2 transform -translate-y-1/2 text-gray-700 bg-white rounded-full shadow-lg cursor-pointer hover:bg-gray-200">
-                <span className="sr-only">Next</span>
-                &#9654;
-            </CarouselNext>
-        </Carousel>
+        <div className="flex flex-col items-center justify-center min-h-screen">
+            <h1 className="text-3xl font-bold mb-6 text-center">Upcoming Events</h1>
+            <Carousel className="w-full max-w-3xl mx-auto overflow-hidden bg-gray-100 rounded-lg shadow-lg">
+                <CarouselContent className="flex">
+                    {events.map((event, index) => {
+                        const imageUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}${event.image.url}`;
+                        console.log("Image URL:", imageUrl); // Log the constructed URL
+
+                        return (
+                            <CarouselItem key={event.id} className="flex-shrink-0 w-full">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                >
+                                    <Card className="mx-2 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
+                                        <div className="relative w-full h-56 md:h-64 lg:h-72 overflow-hidden">
+                                            <Image
+                                                src={imageUrl} // Use the constructed imageUrl here
+                                                alt={event.event_name}
+                                                layout="fill"
+                                                objectFit="cover"
+                                                priority={true}
+                                                className="hover:scale-105 transition-transform duration-500"
+                                            />
+                                        </div>
+                                        <CardContent className="p-4 space-y-2">
+                                            <h3 className="text-xl font-semibold text-gray-800">{event.event_name}</h3>
+                                            <p className="text-sm text-gray-500">
+                                                <strong>Location:</strong> {event.location} | <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
+                                            </p>
+                                            <p className="text-gray-600 text-sm leading-relaxed">
+                                                {event.description}
+                                            </p>
+                                            <Button
+                                                className="mt-4 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors duration-300"
+                                            >
+                                                Learn More
+                                            </Button>
+                                        </CardContent>
+                                    </Card>
+                                </motion.div>
+                            </CarouselItem>
+                        );
+                    })}
+                </CarouselContent>
+                <CarouselPrevious className="absolute top-1/2 left-2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-200 transition duration-300">
+                    <span className="sr-only">Previous</span>
+                    &#9664;
+                </CarouselPrevious>
+                <CarouselNext className="absolute top-1/2 right-2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-200 transition duration-300">
+                    <span className="sr-only">Next</span>
+                    &#9654;
+                </CarouselNext>
+            </Carousel>
+        </div>
     );
-};
+}
 
 export default EventCarousel;

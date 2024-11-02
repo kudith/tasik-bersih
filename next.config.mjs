@@ -3,10 +3,10 @@ const nextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: 'https',
-                hostname: 'drive.google.com',
-                port: '',
-                pathname: '/uc**', // Atur path sesuai kebutuhan
+                protocol: 'http',
+                hostname: 'localhost',
+                port: '1337',
+                pathname: '/uploads/**', // Atur path sesuai kebutuhan
             },
         ],
     },
