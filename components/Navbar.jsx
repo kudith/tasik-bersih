@@ -13,7 +13,6 @@ import {
 import { RiTeamFill, RiShakeHandsFill } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 
-// Array navItems untuk mendefinisikan item dan path navigasi
 const navItems = [
   { name: "Home", path: "/", icon: <FaHome /> },
   { name: "About", path: "/about", icon: <FaInfoCircle /> },
@@ -33,6 +32,10 @@ const Navbar = () => {
   const handleLinkClick = (path) => {
     router.push(path);
     setIsOpen(false);
+  };
+
+  const handleDonateClick = () => {
+    router.push("/donate");
   };
 
   return (
@@ -58,7 +61,7 @@ const Navbar = () => {
                     </p>
                   </Link>
               ))}
-              <Button>Contribute Now</Button>
+              <Button onClick={handleDonateClick}>Contribute Now</Button>
             </div>
 
             {/* Mobile Menu Button */}
@@ -100,7 +103,7 @@ const Navbar = () => {
                       </motion.div>
                   ))}
                   <div className="py-2 px-4">
-                    <Button className="w-full">Contribute Now</Button>
+                    <Button className="w-full" onClick={handleDonateClick}>Contribute Now</Button>
                   </div>
                 </motion.div>
             )}
