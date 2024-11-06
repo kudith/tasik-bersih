@@ -11,13 +11,14 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import { RiTeamFill, RiShakeHandsFill } from "react-icons/ri";
+import { MdVolunteerActivism } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "Home", path: "/", icon: <FaHome /> },
   { name: "About", path: "/about", icon: <FaInfoCircle /> },
   { name: "Events", path: "/events", icon: <FaCalendarAlt /> },
-  { name: "Partnership", path: "/partnership", icon: <RiShakeHandsFill /> },
+  { name: "Volunteer", path: "/volunteer", icon: <MdVolunteerActivism/> },
   { name: "Team", path: "/team", icon: <RiTeamFill /> },
 ];
 

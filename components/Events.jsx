@@ -1,6 +1,7 @@
 "use client"
 import * as React from "react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -16,6 +17,7 @@ import { motion } from "framer-motion";
 export function EventCarousel() {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -35,6 +37,10 @@ export function EventCarousel() {
 
     if (loading) return <p className="text-center">Loading events...</p>;
     if (!events.length) return <p className="text-center">No events available.</p>;
+
+    const handleVolunteerClick = (eventName) => {
+        router.push(`/volunteer?event=${encodeURIComponent(eventName)}`);
+    };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
@@ -72,9 +78,10 @@ export function EventCarousel() {
                                                 {event.description}
                                             </p>
                                             <Button
-                                                className="mt-4 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors duration-300"
+                                                className="mt-4 px-4 py-2 text-sm font-semibold rounded-md transition-colors duration-300"
+                                                onClick={() => handleVolunteerClick(event.event_name)}
                                             >
-                                                Learn More
+                                                Volunteer Now
                                             </Button>
                                         </CardContent>
                                     </Card>
