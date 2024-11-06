@@ -167,7 +167,7 @@ export function DonationForm() {
     }, [token]);
 
     return (
-        <div className="flex md:px-0 px-4 items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex md:px-0 px-4` items-center justify-center min-h-screen bg-gray-100">
             <Card className="w-full max-w-xl p-4 shadow-lg">
                 <CardHeader>
                     <CardTitle>Contribute Now</CardTitle>
