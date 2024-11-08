@@ -1,17 +1,19 @@
+// components/VolunteerForm.jsx
 "use client";
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { volunteerSchema } from "@/lib/formschema";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {useForm} from "react-hook-form";
+import {useState, useEffect} from "react";
+import {useRouter} from "next/navigation";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {volunteerSchema} from "@/lib/formschema";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {
     Card,
     CardHeader,
     CardContent,
     CardFooter,
     CardTitle,
-    CardDescription,
+    CardDescription
 } from "@/components/ui/card";
 import {
     Form,
@@ -19,11 +21,26 @@ import {
     FormField,
     FormItem,
     FormLabel,
-    FormMessage,
+    FormMessage
 } from "@/components/ui/form";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
+import {LoadingModal} from "@/components/ui/LoadingModal";
 
 export function VolunteerForm() {
     const [events, setEvents] = useState([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
     const form = useForm({
         resolver: zodResolver(volunteerSchema),
         defaultValues: {
@@ -40,7 +57,7 @@ export function VolunteerForm() {
         mode: "onChange",
     });
 
-    const { handleSubmit, watch, setValue, setError, formState: { errors } } = form;
+    const {handleSubmit, watch, setValue, formState: {errors, isValid}} = form;
     const registrationType = watch("registrationType");
 
     useEffect(() => {
@@ -48,8 +65,6 @@ export function VolunteerForm() {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api?populate=*`);
                 const data = await response.json();
-                console.log(data.data)
-                console.log(data.data[0].image.url);
                 setEvents(data.data);
             } catch (error) {
                 console.error('Error fetching events:', error);
@@ -61,45 +76,24 @@ export function VolunteerForm() {
 
     useEffect(() => {
         if (registrationType === "individual") {
-            setValue("fullName", "", { shouldValidate: true });
-            setValue("groupName", "", { shouldValidate: true });
-            setValue("groupSize", "", { shouldValidate: true });
+            setValue("fullName", "", {shouldValidate: true});
+            setValue("groupName", "", {shouldValidate: true});
+            setValue("groupSize", "", {shouldValidate: true});
         } else if (registrationType === "group") {
-            setValue("fullName", "", { shouldValidate: true });
-            setValue("groupName", "", { shouldValidate: true });
-            setValue("groupSize", "1", { shouldValidate: true });
+            setValue("fullName", "", {shouldValidate: true});
+            setValue("groupName", "", {shouldValidate: true});
+            setValue("groupSize", "1", {shouldValidate: true});
         }
     }, [registrationType, setValue]);
-
-
-
 
     const onSubmit = async (data) => {
         console.log("Form data submitted:", data);
 
         try {
-            // Find the selected event details
             const selectedEvent = events.find(event => event.event_name === data.event);
-            console.log("Selected event:", selectedEvent);
-
             if (!selectedEvent) {
-                console.warn("Selected event not found.");
                 alert("Selected event not found.");
                 return;
-            }
-
-            // Check if image and formats are defined
-            const eventImage = selectedEvent.image;
-            console.log("Event image object:", eventImage);
-
-            const imageUrl = eventImage
-                ? (eventImage.formats?.large?.url || eventImage.url)
-                : null;
-
-            if (!imageUrl) {
-                console.warn("Image URL not found. Image object or format may be undefined.");
-            } else {
-                console.log("Image URL:", imageUrl);
             }
 
             const payload = {
@@ -116,7 +110,6 @@ export function VolunteerForm() {
                 }
             };
 
-            // Save data to Strapi
             const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/volunteers`, {
                 method: 'POST',
                 headers: {
@@ -129,14 +122,9 @@ export function VolunteerForm() {
             const responseData = await response.json();
 
             if (response.ok) {
-                alert('Volunteer registration successful!');
-
-                // Trigger the confirmation email
                 await fetch('/api/sendConfirmationEmail', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         email: data.email,
                         fullName: data.fullName || data.groupName,
@@ -144,11 +132,11 @@ export function VolunteerForm() {
                         date: selectedEvent.date,
                         time: selectedEvent.time,
                         location: selectedEvent.location,
-                        imageUrl: imageUrl
+                        imageUrl: selectedEvent.image.url,
                     }),
                 });
+                router.push('/volunteer/thanks'); // Navigate to the thank-you page
             } else {
-                console.error('Error response from Strapi:', responseData);
                 alert('Failed to register volunteer. Check console for details.');
             }
         } catch (error) {
@@ -157,30 +145,32 @@ export function VolunteerForm() {
         }
     };
 
-
-
-
-
-
-
-
+    const handleConfirm = async (data) => {
+        setIsDialogOpen(false); // Close the confirmation dialog
+        setIsLoading(true); // Show the loading dialog
+        await onSubmit(data);
+        setIsLoading(false); // Hide the loading dialog
+    };
 
     return (
-        <div className="flex md:px-0 px-4 items-center justify-center min-h-screen bg-gray-100">
+        <div
+            className="flex md:px-0 px-4 items-center justify-center min-h-screen bg-gray-100">
             <Card className="w-full max-w-xl p-4 shadow-lg">
                 <CardHeader>
                     <CardTitle>Volunteer Registration</CardTitle>
-                    <CardDescription>Join us and make a difference</CardDescription>
+                    <CardDescription>Join us and make a
+                                     difference</CardDescription>
                 </CardHeader>
 
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                        <form onSubmit={handleSubmit(onSubmit)}
+                              className="space-y-4">
                             {/* Registration Type Field */}
                             <FormField
                                 control={form.control}
                                 name="registrationType"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Registration Type</FormLabel>
                                         <FormControl>
@@ -188,12 +178,18 @@ export function VolunteerForm() {
                                                 {...field}
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             >
-                                                <option value="">Select registration type</option>
-                                                <option value="individual">Individual</option>
-                                                <option value="group">Group</option>
+                                                <option value="">Select
+                                                                 registration
+                                                                 type
+                                                </option>
+                                                <option
+                                                    value="individual">Individual
+                                                </option>
+                                                <option value="group">Group
+                                                </option>
                                             </select>
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
@@ -203,7 +199,7 @@ export function VolunteerForm() {
                                 <FormField
                                     control={form.control}
                                     name="fullName"
-                                    render={({ field }) => (
+                                    render={({field}) => (
                                         <FormItem>
                                             <FormLabel>Full Name</FormLabel>
                                             <FormControl>
@@ -213,7 +209,7 @@ export function VolunteerForm() {
                                                     className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                                 />
                                             </FormControl>
-                                            <FormMessage />
+                                            <FormMessage/>
                                         </FormItem>
                                     )}
                                 />
@@ -223,9 +219,10 @@ export function VolunteerForm() {
                                     <FormField
                                         control={form.control}
                                         name="groupName"
-                                        render={({ field }) => (
+                                        render={({field}) => (
                                             <FormItem>
-                                                <FormLabel>Group Name</FormLabel>
+                                                <FormLabel>Group
+                                                           Name</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         placeholder="Enter your group name"
@@ -233,16 +230,17 @@ export function VolunteerForm() {
                                                         className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                                     />
                                                 </FormControl>
-                                                <FormMessage />
+                                                <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
                                     <FormField
                                         control={form.control}
                                         name="groupSize"
-                                        render={({ field }) => (
+                                        render={({field}) => (
                                             <FormItem>
-                                                <FormLabel>Group Size</FormLabel>
+                                                <FormLabel>Group
+                                                           Size</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         type="number"
@@ -251,7 +249,7 @@ export function VolunteerForm() {
                                                         className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                                     />
                                                 </FormControl>
-                                                <FormMessage />
+                                                <FormMessage/>
                                             </FormItem>
                                         )}
                                     />
@@ -262,7 +260,7 @@ export function VolunteerForm() {
                             <FormField
                                 control={form.control}
                                 name="address"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Address</FormLabel>
                                         <FormControl>
@@ -272,7 +270,7 @@ export function VolunteerForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
@@ -281,7 +279,7 @@ export function VolunteerForm() {
                             <FormField
                                 control={form.control}
                                 name="phoneNumber"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
@@ -292,7 +290,7 @@ export function VolunteerForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
@@ -301,7 +299,7 @@ export function VolunteerForm() {
                             <FormField
                                 control={form.control}
                                 name="email"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
@@ -312,7 +310,7 @@ export function VolunteerForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
@@ -321,7 +319,7 @@ export function VolunteerForm() {
                             <FormField
                                 control={form.control}
                                 name="motivation"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Motivation</FormLabel>
                                         <FormControl>
@@ -331,7 +329,7 @@ export function VolunteerForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
@@ -340,7 +338,7 @@ export function VolunteerForm() {
                             <FormField
                                 control={form.control}
                                 name="event"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Select Event</FormLabel>
                                         <FormControl>
@@ -348,23 +346,56 @@ export function VolunteerForm() {
                                                 {...field}
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             >
-                                                <option value="">Select an event</option>
+                                                <option value="">Select an
+                                                                 event
+                                                </option>
                                                 {events.map((event) => (
-                                                    <option key={event.id} value={event.event_name}>
+                                                    <option key={event.id}
+                                                            value={event.event_name}>
                                                         {event.event_name}
                                                     </option>
                                                 ))}
                                             </select>
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
 
                             {/* Submit Button */}
-                            <Button type="submit" className="w-full">
-                                Register Now
-                            </Button>
+                            <AlertDialog open={isDialogOpen}
+                                         onOpenChange={setIsDialogOpen}>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        className={`w-full ${!isValid ? 'cursor-not-allowed' : ''}`}
+                                        onClick={() => setIsDialogOpen(true)}
+                                        disabled={!isValid}
+                                    >
+                                        Register Now
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Confirm
+                                                          Submission</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to submit this
+                                            registration form?
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleSubmit(handleConfirm)}>
+                                            Confirm
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+
+                            {/* Loading Modal */}
+                            <LoadingModal isOpen={isLoading}/>
                         </form>
                     </Form>
                 </CardContent>
