@@ -142,8 +142,9 @@ export function VolunteerForm() {
                         fullName: data.fullName || data.groupName,
                         event: data.event,
                         date: selectedEvent.date,
+                        time: selectedEvent.time,
                         location: selectedEvent.location,
-                        imageUrl: imageUrl // Use the imageUrl based on the desired format
+                        imageUrl: imageUrl
                     }),
                 });
             } else {

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -49,6 +49,13 @@ export function EventCarousel() {
                 <CarouselContent className="flex">
                     {events.map((event, index) => {
                         const imageUrl = `${event.image.url}`;
+                        const eventDate = new Date(event.date);
+                        const formattedDate = eventDate.toLocaleDateString("en-US", {
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                        });
+                        const eventTime = eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                         return (
                             <CarouselItem key={event.id} className="flex-shrink-0 w-full">
@@ -60,7 +67,7 @@ export function EventCarousel() {
                                     <Card className="mx-2 bg-white shadow-md hover:shadow-lg transition-shadow duration-300 rounded-lg overflow-hidden">
                                         <div className="relative w-full h-56 md:h-64 lg:h-72 overflow-hidden">
                                             <Image
-                                                src={imageUrl} // Use the constructed imageUrl here
+                                                src={imageUrl}
                                                 alt={event.event_name}
                                                 layout="fill"
                                                 objectFit="cover"
@@ -71,7 +78,7 @@ export function EventCarousel() {
                                         <CardContent className="p-4 space-y-2">
                                             <h3 className="text-xl font-semibold text-gray-800">{event.event_name}</h3>
                                             <p className="text-sm text-gray-500">
-                                                <strong>Location:</strong> {event.location} | <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
+                                                <strong>Location:</strong> {event.location} | <strong>Date:</strong> {formattedDate} | <strong>Time:</strong> {eventTime}
                                             </p>
                                             <p className="text-gray-600 text-sm leading-relaxed">
                                                 {event.description}
