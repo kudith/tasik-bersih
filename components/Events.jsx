@@ -11,7 +11,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/components/ui/carousel";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { motion } from "framer-motion";
 
 export function EventCarousel() {
