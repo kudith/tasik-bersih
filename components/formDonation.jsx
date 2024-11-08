@@ -1,17 +1,16 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { useState, useEffect } from "react";
-
-import { donationSchema } from "@/lib/formschema";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useForm} from "react-hook-form";
+import {useState, useEffect} from "react";
+import {donationSchema} from "@/lib/formschema";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Loader2} from "lucide-react";
 import {
     Card,
     CardHeader,
     CardContent,
-    CardFooter,
     CardTitle,
     CardDescription,
 } from "@/components/ui/card";
@@ -23,10 +22,23 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 export function DonationForm() {
-    const [selectedAmount, setSelectedAmount] = useState(0); // Start with 0 to avoid uncontrolled warning
+    const [selectedAmount, setSelectedAmount] = useState(0);
     const [token, setToken] = useState(null);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const form = useForm({
         resolver: zodResolver(donationSchema),
         defaultValues: {
@@ -34,18 +46,17 @@ export function DonationForm() {
             fullName: "",
             phoneNumber: "",
             email: "",
-            isAnonymous: false, // Ensure this field is controlled
+            isAnonymous: false,
         },
         mode: "onChange",
     });
 
-    const { handleSubmit, setValue, formState: { errors } } = form;
+    const {handleSubmit, setValue, formState: {errors, isValid}} = form;
 
     const onSubmit = async (data) => {
         const nameToDisplay = data.isAnonymous ? "Anonymous" : data.fullName;
 
         try {
-            // Kirim transaksi ke Midtrans
             const midtransResponse = await fetch('/api/transaction', {
                 method: 'POST',
                 headers: {
@@ -62,19 +73,15 @@ export function DonationForm() {
             const midtransResult = await midtransResponse.json();
 
             if (midtransResponse.ok) {
-                // Set token jika perlu
                 setToken(midtransResult.token);
 
-                // Wait for payment confirmation before saving to Strapi
                 const script = document.createElement('script');
                 script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
                 script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
                 script.onload = async () => {
+                    setIsLoading(false); // Hide the loading state when the script is loaded
                     window.snap.pay(midtransResult.token, {
                         onSuccess: async function (result) {
-                            console.log("Payment successful!");
-
-                            // Save data to Strapi only if payment is successful
                             const strapiResponse = await fetch('http://localhost:1337/api/donations', {
                                 method: 'POST',
                                 headers: {
@@ -96,48 +103,58 @@ export function DonationForm() {
                             const strapiResult = await strapiResponse.json();
 
                             if (strapiResponse.ok) {
-                                alert('Transaction successful and data saved to Strapi!');
+                                console.log('Transaction successful and data saved to Strapi!');
+                                await fetch('/api/confirmationDonateMail', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        email: data.email,
+                                        fullName: nameToDisplay,
+                                        donationAmount: data.donationAmount,
+                                        date: new Date().toISOString(),
+                                    }),
+                                });
                             } else {
                                 console.error('Failed to save transaction data to Strapi:', strapiResult);
-                                alert('Transaction successful, but failed to save data to Strapi.');
+                                console.log('Transaction successful, but failed to save data to Strapi.');
                             }
                         },
                         onPending: function (result) {
-                            alert("Waiting for your payment!");
+                            console.log("Waiting for your payment!");
                         },
                         onError: function (result) {
-                            alert("Payment failed!");
+                            console.log("Payment failed!");
                         },
                         onClose: function () {
-                            alert("Payment modal closed!");
+                            console.log("Payment modal closed!");
                         }
                     });
                 };
                 document.body.appendChild(script);
             } else {
-                alert(midtransResult.error || 'Failed to create transaction with Midtrans');
+                console.log(midtransResult.error || 'Failed to create transaction with Midtrans');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert('An error occurred while processing the transaction');
+            console.log('An error occurred while processing the transaction');
         }
     };
 
     const handleSelectAmount = (amount) => {
         setSelectedAmount(amount);
-        setValue("donationAmount", amount, { shouldValidate: true });
+        setValue("donationAmount", amount, {shouldValidate: true});
     };
 
     const handleInputChange = (e) => {
-        const value = e.target.value.replace(/IDR\s*/i, ''); // Remove 'IDR' from input
-        const numberValue = Number(value.replace(/,/g, '')); // Remove commas for number conversion
+        const value = e.target.value.replace(/IDR\s*/i, '');
+        const numberValue = Number(value.replace(/,/g, ''));
 
-        setSelectedAmount(0); // Reset to 0 when input changes
+        setSelectedAmount(0);
 
         if (!isNaN(numberValue) && numberValue >= 0) {
-            setValue("donationAmount", numberValue, { shouldValidate: true });
+            setValue("donationAmount", numberValue, {shouldValidate: true});
         } else {
-            setValue("donationAmount", 0); // Default back to 0 if invalid
+            setValue("donationAmount", 0);
         }
     };
 
@@ -149,16 +166,16 @@ export function DonationForm() {
             script.onload = () => {
                 window.snap.pay(token, {
                     onSuccess: function (result) {
-                        alert("Payment successful!");
+                        console.log("Payment successful!");
                     },
                     onPending: function (result) {
-                        alert("Waiting for your payment!");
+                        console.log("Waiting for your payment!");
                     },
                     onError: function (result) {
-                        alert("Payment failed!");
+                        console.log("Payment failed!");
                     },
                     onClose: function () {
-                        alert("Payment modal closed!");
+                        console.log("Payment modal closed!");
                     }
                 });
             };
@@ -166,8 +183,15 @@ export function DonationForm() {
         }
     }, [token]);
 
+    const handleConfirm = async (data) => {
+        setIsDialogOpen(false);
+        setIsLoading(true); // Show the loading state
+        await onSubmit(data);
+    };
+
     return (
-        <div className="flex md:px-0 px-4` items-center justify-center min-h-screen bg-gray-100">
+        <div
+            className="flex md:px-0 px-4 items-center justify-center min-h-screen bg-gray-100">
             <Card className="w-full max-w-xl p-4 shadow-lg">
                 <CardHeader>
                     <CardTitle>Contribute Now</CardTitle>
@@ -176,12 +200,12 @@ export function DonationForm() {
 
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                            {/* Full Name Field */}
+                        <form onSubmit={handleSubmit(onSubmit)}
+                              className="space-y-4">
                             <FormField
                                 control={form.control}
                                 name="fullName"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Full Name</FormLabel>
                                         <FormControl>
@@ -192,35 +216,35 @@ export function DonationForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
 
-                            {/* Anonymous Checkbox */}
                             <FormField
                                 control={form.control}
                                 name="isAnonymous"
-                                render={({ field }) => (
-                                    <FormItem className="flex items-center space-x-2">
+                                render={({field}) => (
+                                    <FormItem
+                                        className="flex items-center space-x-2">
                                         <FormControl>
                                             <Checkbox
                                                 checked={field.value}
                                                 onCheckedChange={field.onChange}
                                             />
                                         </FormControl>
-                                        <FormLabel htmlFor="anonymous" className="text-sm">
+                                        <FormLabel htmlFor="anonymous"
+                                                   className="text-sm">
                                             Donate as Anonymous
                                         </FormLabel>
                                     </FormItem>
                                 )}
                             />
 
-                            {/* Phone Number Field */}
                             <FormField
                                 control={form.control}
                                 name="phoneNumber"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Phone Number</FormLabel>
                                         <FormControl>
@@ -231,16 +255,15 @@ export function DonationForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
 
-                            {/* Email Field */}
                             <FormField
                                 control={form.control}
                                 name="email"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Email</FormLabel>
                                         <FormControl>
@@ -251,12 +274,11 @@ export function DonationForm() {
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
 
-                            {/* Preset Donation Amount Buttons */}
                             <div className="grid grid-cols-2 gap-2">
                                 {["10000", "20000", "50000", "75000", "100000"].map((amount) => (
                                     <Button
@@ -272,31 +294,73 @@ export function DonationForm() {
                                 ))}
                             </div>
 
-                            {/* Custom Donation Amount Input */}
                             <FormField
                                 control={form.control}
                                 name="donationAmount"
-                                render={({ field }) => (
+                                render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Custom Donation Amount</FormLabel>
+                                        <FormLabel>Custom Donation
+                                                   Amount</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="text" // Changed to text to allow for custom formatting
+                                                type="text"
                                                 placeholder="Enter a custom amount (IDR)"
-                                                value={`IDR ${field.value.toLocaleString()}`} // Format the value to show "IDR"
+                                                value={`IDR ${field.value.toLocaleString()}`}
                                                 onChange={handleInputChange}
                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                                             />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage/>
                                     </FormItem>
                                 )}
                             />
 
-                            {/* Submit Button */}
-                            <Button type="submit" className="w-full">
-                                Donate Now
-                            </Button>
+                            <AlertDialog open={isDialogOpen}
+                                         onOpenChange={setIsDialogOpen}>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        type="button"
+                                        className={`w-full ${!isValid ? 'cursor-not-allowed' : ''}`}
+                                        onClick={() => setIsDialogOpen(true)}
+                                        disabled={!isValid || isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <Loader2
+                                                    className="animate-spin mr-2"/>
+                                                Please wait
+                                            </>
+                                        ) : (
+                                            "Donate Now"
+                                        )}
+                                    </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Confirm
+                                                          Donation</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to submit this
+                                            donation?
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleSubmit(handleConfirm)}>
+                                            {isLoading ? (
+                                                <Button disabled>
+                                                    <Loader2
+                                                        className="animate-spin"/>
+                                                    Please wait
+                                                </Button>
+                                            ) : (
+                                                "Confirm"
+                                            )}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                         </form>
                     </Form>
                 </CardContent>
