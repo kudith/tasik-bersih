@@ -48,8 +48,7 @@ export function EventCarousel() {
             <Carousel className="w-full max-w-3xl mx-auto overflow-hidden bg-gray-100 rounded-lg shadow-lg">
                 <CarouselContent className="flex">
                     {events.map((event, index) => {
-                        const imageUrl = `${process.env.NEXT_PUBLIC_STRAPI_URL}${event.image.url}`;
-                        console.log("Image URL:", imageUrl); // Log the constructed URL
+                        const imageUrl = `${event.image.url}`;
 
                         return (
                             <CarouselItem key={event.id} className="flex-shrink-0 w-full">

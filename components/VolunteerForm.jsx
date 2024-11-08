@@ -46,8 +46,10 @@ export function VolunteerForm() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api`);
+                const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api?populate=*`);
                 const data = await response.json();
+                console.log(data.data)
+                console.log(data.data[0].image.url);
                 setEvents(data.data);
             } catch (error) {
                 console.error('Error fetching events:', error);
@@ -69,27 +71,52 @@ export function VolunteerForm() {
         }
     }, [registrationType, setValue]);
 
+
+
+
     const onSubmit = async (data) => {
-        console.log(data);
+        console.log("Form data submitted:", data);
+
         try {
-            // Menyusun data yang akan dikirim berdasarkan tipe pendaftaran
+            // Find the selected event details
+            const selectedEvent = events.find(event => event.event_name === data.event);
+            console.log("Selected event:", selectedEvent);
+
+            if (!selectedEvent) {
+                console.warn("Selected event not found.");
+                alert("Selected event not found.");
+                return;
+            }
+
+            // Check if image and formats are defined
+            const eventImage = selectedEvent.image;
+            console.log("Event image object:", eventImage);
+
+            const imageUrl = eventImage
+                ? (eventImage.formats?.large?.url || eventImage.url)
+                : null;
+
+            if (!imageUrl) {
+                console.warn("Image URL not found. Image object or format may be undefined.");
+            } else {
+                console.log("Image URL:", imageUrl);
+            }
+
             const payload = {
                 data: {
                     registrationType: data.registrationType,
-                    // Pastikan hanya mengirim fullName jika registrationType adalah "individual"
                     fullName: data.registrationType === "individual" ? data.fullName : "",
-                    // Pastikan hanya mengirim groupName dan groupSize jika registrationType adalah "group"
                     groupName: data.registrationType === "group" ? data.groupName : "",
                     groupSize: data.registrationType === "group" ? data.groupSize : 0,
                     address: data.address,
                     email: data.email,
                     event: data.event,
                     motivation: data.motivation,
-                    phoneNumber: data.phoneNumber
+                    phoneNumber: data.phoneNumber,
                 }
             };
 
-            // Kirim data ke Strapi
+            // Save data to Strapi
             const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/volunteers`, {
                 method: 'POST',
                 headers: {
@@ -103,15 +130,37 @@ export function VolunteerForm() {
 
             if (response.ok) {
                 alert('Volunteer registration successful!');
+
+                // Trigger the confirmation email
+                await fetch('/api/sendConfirmationEmail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: data.email,
+                        fullName: data.fullName || data.groupName,
+                        event: data.event,
+                        date: selectedEvent.date,
+                        location: selectedEvent.location,
+                        imageUrl: imageUrl // Use the imageUrl based on the desired format
+                    }),
+                });
             } else {
-                console.error('Error response:', responseData);
+                console.error('Error response from Strapi:', responseData);
                 alert('Failed to register volunteer. Check console for details.');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error in onSubmit function:', error);
             alert('An error occurred while registering the volunteer.');
         }
     };
+
+
+
+
+
+
 
 
 
