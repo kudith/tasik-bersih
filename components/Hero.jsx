@@ -4,9 +4,8 @@ import { motion } from "framer-motion";
 import axios from "axios";
 import { FaLeaf, FaHandsHelping } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import {SkeletonHero} from "@/components/skeleton/SkeletonHero";
+import { SkeletonHero } from "@/components/skeleton/SkeletonHero";
 
-// Framer Motion variants for smooth animations
 const fadeIn = {
   hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { duration: 1, ease: "easeOut" } },
@@ -23,9 +22,9 @@ const buttonClick = {
 
 const Hero = () => {
   const [heroData, setHeroData] = useState(null);
+  const [error, setError] = useState(null);
   const router = useRouter();
 
-  // Fetching data from Strapi
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
@@ -34,15 +33,16 @@ const Hero = () => {
         );
         setHeroData(response.data.data);
       } catch (error) {
-        console.error("Error fetching hero data:", error);
+        setError("Failed to fetch hero data. Please try again later.");
       }
     };
     fetchHeroData();
   }, []);
 
-  if (!heroData) return <SkeletonHero/>;
+  if (error) return Error(error);
 
-  // Destructure data
+  if (!heroData) return <SkeletonHero />;
+
   const { tittle, subtittle } = heroData;
 
   const handleDonateClick = () => {
@@ -50,14 +50,13 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8 ">
+    <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8">
       <motion.div
         className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6"
         initial="hidden"
         animate="visible"
         variants={fadeIn}
       >
-        {/* Title */}
         <motion.h1
           className="text-4xl md:text-6xl font-bold tracking-tight text-black leading-tight"
           variants={slideUp}
@@ -65,7 +64,6 @@ const Hero = () => {
           {tittle}
         </motion.h1>
 
-        {/* Subtitle */}
         <motion.p
           className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl"
           variants={slideUp}
@@ -73,7 +71,6 @@ const Hero = () => {
           {subtittle}
         </motion.p>
 
-        {/* Buttons */}
         <motion.div
           className="flex flex-col sm:flex-row gap-4 mt-6 justify-center"
           variants={slideUp}

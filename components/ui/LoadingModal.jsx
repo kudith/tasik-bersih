@@ -4,7 +4,6 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogHeader,
-  AlertDialogDescription,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { PuffLoader } from "react-spinners";
@@ -16,7 +15,7 @@ export function LoadingModal({ isOpen }) {
       <AlertDialogContent className="flex items-center justify-center">
         <AlertDialogHeader>
           <AlertDialogTitle></AlertDialogTitle>
-          <AlertDialogDescription className="flex flex-col items-center">
+          <div className="flex flex-col items-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -37,7 +36,7 @@ export function LoadingModal({ isOpen }) {
               <span className="inline-block animate-bounce delay-200">.</span>
               <span className="inline-block animate-bounce delay-400">.</span>
             </motion.div>
-          </AlertDialogDescription>
+          </div>
         </AlertDialogHeader>
       </AlertDialogContent>
     </AlertDialog>

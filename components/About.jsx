@@ -31,7 +31,6 @@ const AboutUs = React.memo(() => {
             setAboutData(result.data);
         } catch (error) {
             setError(error);
-            console.error('Error fetching About Us data:', error);
         }
     }, [locale]);
 

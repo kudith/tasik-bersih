@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
     Card,
@@ -13,29 +12,10 @@ import { Button } from "@/components/ui/button";
 import { FaUserCheck } from "react-icons/fa";
 
 export default function ThanksComponent({ isOpen, onClose }) {
-    const [countdown, setCountdown] = useState(10);
-
-    useEffect(() => {
-        if (isOpen) {
-            const timer = setTimeout(() => {
-                onClose();
-            }, 10000); // 10 seconds
-
-            const countdownInterval = setInterval(() => {
-                setCountdown(prev => prev - 1);
-            }, 1000);
-
-            return () => {
-                clearTimeout(timer);
-                clearInterval(countdownInterval);
-            };
-        }
-    }, [isOpen, onClose]);
-
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -51,11 +31,10 @@ export default function ThanksComponent({ isOpen, onClose }) {
                     </CardHeader>
                     <CardContent className="text-center">
                         <p className="text-gray-700">We appreciate your willingness to volunteer with us. Together, we can make a difference!</p>
-                        <p className="text-gray-500 text-xs mt-2">You will be redirected to the home page in {countdown} seconds.</p>
                     </CardContent>
                     <CardFooter className="text-center">
                         <Button onClick={onClose} className="w-full mt-4">
-                            Back to Home
+                            Close
                         </Button>
                     </CardFooter>
                 </Card>
