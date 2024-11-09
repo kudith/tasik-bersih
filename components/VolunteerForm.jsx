@@ -36,6 +36,8 @@ import { LoadingModal } from "@/components/ui/LoadingModal";
 import ThanksComponent from "@/components/ui/thanks";
 import { motion } from "framer-motion";
 import { SkeletonVolunteerForm } from "@/components/skeleton/SkeletonVolunteer";
+import { VolunteerBenefits } from "@/components/VolunteerBenefits";
+import { useInView } from "react-intersection-observer";
 
 export function VolunteerForm() {
   const [events, setEvents] = useState([]);
@@ -161,15 +163,21 @@ export function VolunteerForm() {
     router.push('/'); // Navigate to the home page
   };
 
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
   if (isLoading) return <SkeletonVolunteerForm />;
 
   return (
-    <div className="flex md:px-0 px-4 items-center justify-center min-h-screen">
+    <div id="volunteer" className="flex flex-col md:flex-row items-center justify-start max-w-7xl mx-auto md:px-0 px-4 overflow-hidden">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
+        ref={ref}
+        initial={{ opacity: 0, x: -50 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        exit={{ opacity: 0, x: -50 }}
+        transition={{ duration: 0.6, ease: "easeInOut" }}
         className="w-full max-w-xl p-4"
       >
         <Card className="shadow-lg">
@@ -404,6 +412,7 @@ export function VolunteerForm() {
           </CardContent>
         </Card>
       </motion.div>
+      <VolunteerBenefits/>
     </div>
   );
 }

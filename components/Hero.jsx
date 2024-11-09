@@ -50,7 +50,7 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative h-screen flex items-center justify-center px-4 md:px-8 ">
+    <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8 ">
       <motion.div
         className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6"
         initial="hidden"
