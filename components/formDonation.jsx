@@ -172,7 +172,7 @@ const DonationForm = React.memo(() => {
 
   return (
     <motion.div
-      className="flex md:px-0 px-4 items-center justify-center min-h-screen bg-gray-100"
+      className="flex md:px-0 px-4 items-center justify-center min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

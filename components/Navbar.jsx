@@ -10,13 +10,13 @@ import {
   FaInfoCircle,
   FaCalendarAlt,
 } from "react-icons/fa";
-import { RiTeamFill} from "react-icons/ri";
+import { RiTeamFill } from "react-icons/ri";
 import { MdVolunteerActivism } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
   { name: "Home", path: "/", icon: <FaHome /> },
-  { name: "About", path: "/about", icon: <FaInfoCircle /> },
+  { name: "About", path: "#about", icon: <FaInfoCircle /> },
   { name: "Events", path: "/events", icon: <FaCalendarAlt /> },
   { name: "Volunteer", path: "/volunteer", icon: <MdVolunteerActivism /> },
   { name: "Team", path: "/team", icon: <RiTeamFill /> },
@@ -40,7 +40,7 @@ const Navbar = React.memo(() => {
   }, [router]);
 
   return (
-    <nav className="bg-secondary md:py-2 shadow-lg">
+    <nav className="fixed top-0 left-0 w-full bg-white bg-opacity-30 backdrop-blur-md md:py-2 shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}

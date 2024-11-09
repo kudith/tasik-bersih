@@ -2,6 +2,8 @@ import DonationForm from "@/components/formDonation";
 
 export default function EventPage() {
     return (
-        <DonationForm/>
+        <div className="my-20">
+            <DonationForm/>
+        </div>
     );
 }

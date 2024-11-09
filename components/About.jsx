@@ -1,37 +1,147 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-export default function AboutUs() {
-    const { locale } = useRouter(); // Dapatkan locale saat ini
+import { motion } from "framer-motion";
+import { useInView } from 'react-intersection-observer';
+import Image from 'next/image';
+import * as React from "react";
+import { SkeletonAboutUs } from "@/components/skeleton/SkeletonAboutUs";
+
+const AboutUs = React.memo(() => {
+    const { locale } = useRouter();
     const [aboutData, setAboutData] = useState(null);
+    const [error, setError] = useState(null);
 
-    useEffect(() => {
-        // Mengambil data dari API Strapi sesuai locale yang dipilih
-        const fetchAboutData = async () => {
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us`
-                );
-                const data = await response.json();
-                setAboutData(data.data);
-            } catch (error) {
-                console.error('Error fetching About Us data:', error);
+    const [ref1, inView1] = useInView({ triggerOnce: true });
+    const [ref2, inView2] = useInView({ triggerOnce: true });
+    const [ref3, inView3] = useInView({ triggerOnce: true });
+    const [ref4, inView4] = useInView({ triggerOnce: true });
+    const [ref5, inView5] = useInView({ triggerOnce: true });
+    const [ref6, inView6] = useInView({ triggerOnce: true });
+
+    const fetchAboutData = useCallback(async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?populate=*`
+            );
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        };
-
-        fetchAboutData();
+            const result = await response.json();
+            setAboutData(result.data);
+        } catch (error) {
+            setError(error);
+            console.error('Error fetching About Us data:', error);
+        }
     }, [locale]);
 
-    if (!aboutData) return <p>Loading...</p>;
+    useEffect(() => {
+        fetchAboutData();
+    }, [fetchAboutData]);
+
+    if (error) return <p>Error loading data: {error.message}</p>;
+    if (!aboutData) return <SkeletonAboutUs />;
+
+    const { image_1, image_2, image_3, who_we_are, vision, mission } = aboutData;
 
     return (
-        <section className="p-6 max-w-3xl mx-auto bg-white shadow-md rounded-lg text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">{aboutData.title || 'Who We Are'}</h2>
-            <p className="text-gray-700 mb-6">{aboutData.who_we_are}</p>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">{aboutData.vision_title || 'Our Vision'}</h3>
-            <p className="text-gray-700 mb-6">{aboutData.vision}</p>
-            <h3 className="text-2xl font-bold text-gray-800 mb-4">{aboutData.mission_title || 'Our Mission'}</h3>
-            <p className="text-gray-700">{aboutData.mission}</p>
+        <section id="about" className="py-16 px-4 md:px-8 bg-gray-50 text-gray-900">
+            <div className="container max-w-6xl mx-auto">
+                <motion.div
+                    className="relative overflow-hidden rounded-lg shadow-lg mb-12"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: inView1 ? 1 : 0 }}
+                    transition={{ duration: 1 }}
+                    ref={ref1}
+                >
+                    <Image
+                        src={image_1.url}
+                        alt="About Us Image 1"
+                        width={700}
+                        height={400}
+                        quality={100}
+                        className="w-full h-96 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
+                        loading="lazy"
+                    />
+                </motion.div>
+
+                <motion.div
+                    className="text-center space-y-8"
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: inView2 ? 1 : 0, y: inView2 ? 0 : 50 }}
+                    transition={{ duration: 1, delay: 0.3 }}
+                    ref={ref2}
+                >
+                    <h2 className="text-5xl font-extrabold text-gray-800 mb-4">About Us</h2>
+                    <p className="text-xl text-gray-700 leading-relaxed">{who_we_are}</p>
+                </motion.div>
+
+                <div className="my-8 border-t border-gray-300"></div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                    <motion.div
+                        className="flex flex-col justify-center"
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: inView3 ? 1 : 0, y: inView3 ? 0 : 50 }}
+                        transition={{ duration: 1, delay: 0.7 }}
+                        ref={ref3}
+                    >
+                        <h3 className="text-4xl font-bold text-gray-800 mb-4">Our Mission</h3>
+                        <p className="text-lg text-gray-700 leading-relaxed">{mission}</p>
+                    </motion.div>
+
+                    <motion.div
+                        className="relative overflow-hidden rounded-lg shadow-lg"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: inView4 ? 1 : 0 }}
+                        transition={{ duration: 1, delay: 0.7 }}
+                        ref={ref4}
+                    >
+                        <Image
+                            src={image_3?.formats?.large?.url || image_3?.formats?.medium?.url || image_3?.formats?.small?.url}
+                            alt="Our Mission Image"
+                            width={700}
+                            height={400}
+                            quality={100}
+                            className="w-full h-80 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
+                            loading="lazy"
+                        />
+                    </motion.div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                    <motion.div
+                        className="relative overflow-hidden rounded-lg shadow-lg order-2 md:order-1"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: inView5 ? 1 : 0 }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        ref={ref5}
+                    >
+                        <Image
+                            src={image_2?.formats?.large?.url || image_2?.formats?.medium?.url || image_2?.formats?.small?.url}
+                            alt="Our Vision Image"
+                            width={700}
+                            height={400}
+                            quality={100}
+                            className="w-full h-80 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
+                            loading="lazy"
+                        />
+                    </motion.div>
+
+                    <motion.div
+                        className="flex flex-col justify-center order-1 md:order-2"
+                        initial={{ opacity: 0, y: 50 }}
+                        animate={{ opacity: inView6 ? 1 : 0, y: inView6 ? 0 : 50 }}
+                        transition={{ duration: 1, delay: 0.5 }}
+                        ref={ref6}
+                    >
+                        <h3 className="text-4xl font-bold text-gray-800 mb-4">Our Vision</h3>
+                        <p className="text-lg text-gray-700 leading-relaxed">{vision}</p>
+                    </motion.div>
+                </div>
+            </div>
         </section>
     );
-}
+});
+
+export default AboutUs;
