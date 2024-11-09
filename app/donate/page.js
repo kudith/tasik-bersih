@@ -1,4 +1,4 @@
-import {DonationForm} from "@/components/formDonation";
+import DonationForm from "@/components/formDonation";
 
 export default function EventPage() {
     return (

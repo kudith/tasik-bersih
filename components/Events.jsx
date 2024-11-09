@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useState, useEffect } from "react";
+import useSWR from "swr";
 import { useRouter } from "next/navigation";
 import Autoplay from "embla-carousel-autoplay";
 import { Button } from "@/components/ui/button";
@@ -17,33 +17,25 @@ import { motion } from "framer-motion";
 import { CalendarIcon, MapPinIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { SkeletonEvent } from "@/components/skeleton/SkeletonEvent";
 
-export function EventCarousel() {
-  const [events, setEvents] = useState([]);
-  const [loading, setLoading] = useState(true);
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
+const EventCarousel = React.memo(() => {
   const router = useRouter();
   const plugin = React.useRef(Autoplay({ delay: 3000, stopOnInteraction: true }));
+  const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api?populate=*`, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+  });
 
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api?populate=*`);
-        const data = await response.json();
-        setEvents(data.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching events:", error);
-        setLoading(false);
-      }
-    };
-    fetchEvents();
-  }, []);
-
-  if (loading) return <SkeletonEvent />;
-  if (!events.length) return <p className="text-center">No events available.</p>;
-
-  const handleVolunteerClick = (eventName) => {
+  const handleVolunteerClick = React.useCallback((eventName) => {
     router.push(`/volunteer?event=${encodeURIComponent(eventName)}`);
-  };
+  }, [router]);
+
+  if (error) return <p className="text-center">Failed to load events.</p>;
+  if (!data) return <SkeletonEvent />;
+
+  const events = data.data;
+  if (!events.length) return <p className="text-center">No events available.</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen py-10 px-4">
@@ -103,9 +95,9 @@ export function EventCarousel() {
                           <Image
                             src={imageUrl}
                             alt={event.event_name}
-                            priority={true}
                             fill
                             sizes="50vw"
+                            priority={index === 0}
                             style={{ objectFit: "cover" }}
                           />
                         </div>
@@ -128,6 +120,6 @@ export function EventCarousel() {
       </Carousel>
     </div>
   );
-}
+});
 
 export default EventCarousel;
