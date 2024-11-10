@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import TeamSkeleton from "@/components/skeleton/TeamSkeleton";
 
 const fadeIn = {
@@ -64,6 +64,8 @@ const Team = () => {
                                 <Image
                                     src={image.url}
                                     alt={name}
+                                    sizes={500}
+                                    priority={true}
                                     layout="fill"
                                     objectFit="cover"
                                     className="transition-transform duration-300 ease-in-out transform hover:scale-105"

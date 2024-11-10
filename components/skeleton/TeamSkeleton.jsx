@@ -1,6 +1,6 @@
-// components/skeleton/TeamSkeleton.jsx
 import React from "react";
 import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const fadeIn = {
     hidden: { opacity: 0 },
@@ -13,14 +13,15 @@ const TeamSkeleton = ({ count }) => {
     return (
         <section id="team" className="py-16 min-h-screen">
             <div className="container mx-auto px-6">
+                {/* Headline */}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-bold text-gray-800 mb-4">Meet Our Team</h2>
-                    <p className="text-lg text-gray-600 max-w-xl mx-auto">
-                        Dedicated individuals who contribute to making a difference.
-                    </p>
+                    <Skeleton className="h-10 w-48 mx-auto mb-4" />
+                    <Skeleton className="h-6 w-96 mx-auto" />
                 </div>
+
+                {/* Team Cards */}
                 <motion.div
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2"
+                    className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-20"
                     initial="hidden"
                     animate="visible"
                     variants={fadeIn}
@@ -28,11 +29,11 @@ const TeamSkeleton = ({ count }) => {
                     {skeletons.map((_, index) => (
                         <motion.div
                             key={index}
-                            className="transform hover:scale-105 transition duration-300 flex flex-col items-center justify-center"
+                            className="flex flex-col items-center justify-center space-y-4"
                             variants={fadeIn}
                         >
-                            <div className="w-48 h-48 bg-gray-300 mb-4 flex justify-center items-center"></div>
-                            <div className="w-32 h-6 bg-gray-300 mb-1"></div>
+                            <Skeleton className="w-48 h-48 mb-4" />
+                            <Skeleton className="w-32 h-6 mb-1" />
                         </motion.div>
                     ))}
                 </motion.div>
