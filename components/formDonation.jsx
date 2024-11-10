@@ -35,6 +35,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {LoadingModal} from "@/components/ui/LoadingModal";
 
 const DonationForm = React.memo(() => {
   const [selectedAmount, setSelectedAmount] = useState(0);
@@ -341,6 +342,7 @@ const DonationForm = React.memo(() => {
           </Form>
         </CardContent>
       </Card>
+      <LoadingModal isOpen={isLoading} />
     </motion.div>
   );
 });
