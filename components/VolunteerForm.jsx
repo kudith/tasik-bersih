@@ -65,7 +65,7 @@ export function VolunteerForm() {
 
     const fetchEvents = useCallback(async () => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events-api?populate=*`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?populate=*`);
             if (!response.ok) {
                 throw new Error('Failed to fetch events');
             }
