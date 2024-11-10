@@ -29,7 +29,6 @@ const AboutUs = React.memo(() => {
             }
             const result = await response.json();
             setAboutData(result.data);
-            console.log(result.data);
         } catch (error) {
             setError(error);
         }
@@ -43,7 +42,6 @@ const AboutUs = React.memo(() => {
     if (!aboutData) return <SkeletonAboutUs />;
 
     const { image_1, image_2, image_3, who_we_are, vision, mission } = aboutData;
-    console.log(aboutData);
     return (
         <section id="about" className="py-16 px-4 md:px-8 bg-gray-50 text-gray-900">
             <div className="container max-w-6xl mx-auto">

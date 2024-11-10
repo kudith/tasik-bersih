@@ -29,7 +29,7 @@ const Hero = () => {
     const fetchHeroData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:1337/api/hero?populate=*"
+          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/hero?populate=*`
         );
         setHeroData(response.data.data);
       } catch (error) {

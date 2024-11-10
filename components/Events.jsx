@@ -1,6 +1,6 @@
 "use client";
-import * as React from "react";
 import useSWR from "swr";
+import * as React from "react";
 import {useRouter} from "next/navigation";
 import Autoplay from "embla-carousel-autoplay";
 import {Button} from "@/components/ui/button";
@@ -24,13 +24,11 @@ import {useInView} from "react-intersection-observer";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
-// Animasi untuk teks "Upcoming Events"
 const headingVariants = {
     hidden: {opacity: 0, y: -50},
     visible: {opacity: 1, y: 0, transition: {duration: 0.8, ease: "easeOut"}},
 };
 
-// Animasi untuk item event
 const eventItemVariants = {
     hidden: {opacity: 0, scale: 0.95},
     visible: {
@@ -124,38 +122,12 @@ const EventCarousel = React.memo(() => {
     );
     const {data, error} = useSWR(
         `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?populate=*`,
-        (url) => {
-            console.log("Fetching data from URL:", url);
-            return fetch(url).then((res) => res.json());
-        },
+        fetcher,
         {
             revalidateOnFocus: false,
             dedupingInterval: 60000,
         }
     );
-
-    if (data) {
-        const [event] = data.data;
-        const {
-            id,
-            event_name,
-            date,
-            description,
-            location,
-            image,
-            time,
-            volunteers,
-        } = event;
-
-        console.log("Event ID:", id);
-        console.log("Event Name:", event_name);
-        console.log("Date:", date);
-        console.log("Description:", description);
-        console.log("Location:", location);
-        console.log("Image:", image);
-        console.log("Time:", time);
-        console.log("Volunteers:", volunteers);
-    }
 
     const handleVolunteerClick = React.useCallback(
         (eventName) => {
