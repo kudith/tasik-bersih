@@ -1,11 +1,16 @@
-import Image from "next/image";
+import Hero from "@/components/Hero";
 import AboutUs from "@/components/About";
+import EventCarousel from "@/components/Events";
+import {VolunteerForm} from "@/components/VolunteerForm";
+
 
 export default function Home() {
     return (
-        <main
-            className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div>
+            <Hero/>
             <AboutUs/>
-        </main>
+            <EventCarousel/>
+            <VolunteerForm/>
+        </div>
     );
 }
