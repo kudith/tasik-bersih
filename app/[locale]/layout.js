@@ -1,23 +1,27 @@
 import "../globals.css";
 import Navbar from "@/components/Navbar";
-import {Footer} from "@/components/Footer";
-import {locales} from "@/i18nConfig";
-
+import { Footer } from "@/components/Footer";
+import i18nConfig from "../../i18nConfig";
+import { notFound } from "next/navigation";
 
 export const metadata = {
   title: "kalangsariPride",
   description: "Community website for Kalangsari Pride",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children, params }) {
+  const { locale } = await params;
+
+  if (!i18nConfig.locales.includes(locale)) {
+    notFound();
+  }
+
   return (
-    <html lang={locales}>
-      <body
-        className={`antialiased`}
-      >
-      <Navbar/>
+    <html lang={locale}>
+      <body className="antialiased">
+        <Navbar />
         {children}
-      <Footer/>
+        <Footer />
       </body>
     </html>
   );

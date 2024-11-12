@@ -34,7 +34,7 @@ const Hero = () => {
     const fetchHeroData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/hero?locale=${locale}`
+            `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/hero?locale=${locale}`
         );
         setHeroData(response.data.data);
         console.log(response.data.data);
@@ -56,49 +56,49 @@ const Hero = () => {
   };
 
   return (
-    <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8">
-      <motion.div
-        className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6"
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-      >
-        <motion.h1
-          className="text-4xl md:text-6xl font-bold tracking-tight text-black leading-tight"
-          variants={slideUp}
-        >
-          {tittle}
-        </motion.h1>
-
-        <motion.p
-          className="text-lg md:text-xl text-gray-60 leading-relaxed max-w-xl"
-          variants={slideUp}
-        >
-          {subtittle}
-        </motion.p>
-
+      <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8">
         <motion.div
-          className="flex flex-col sm:flex-row gap-4 mt-6 justify-center"
-          variants={slideUp}
+            className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6"
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
         >
-          <motion.button
-            className="flex items-center justify-center py-3 px-6 bg-black text-white rounded-md shadow-lg hover:bg-gray-900 transition-all duration-300"
-            onClick={handleDonateClick}
-            whileTap={buttonClick.tap}
+          <motion.h1
+              className="text-4xl md:text-6xl font-bold tracking-tight text-black leading-tight"
+              variants={slideUp}
           >
-            <FaHandsHelping className="mr-2" />
-            {t('contribute_now')}
-          </motion.button>
-          <motion.button
-            className="flex items-center justify-center py-3 px-6 bg-gray-100 text-black border border-gray-300 rounded-md shadow-lg hover:bg-gray-200 transition-all duration-300"
-            whileTap={buttonClick.tap}
+            {tittle}
+          </motion.h1>
+
+          <motion.p
+              className="text-lg md:text-xl text-gray-60 leading-relaxed max-w-xl"
+              variants={slideUp}
           >
-            <FaLeaf className="mr-2" />
-            {t('learn_more')}
-          </motion.button>
+            {subtittle}
+          </motion.p>
+
+          <motion.div
+              className="flex flex-col sm:flex-row gap-4 mt-6 justify-center"
+              variants={slideUp}
+          >
+            <motion.button
+                className="flex items-center justify-center py-3 px-6 bg-black text-white rounded-md shadow-lg hover:bg-gray-900 transition-all duration-300"
+                onClick={handleDonateClick}
+                whileTap={buttonClick.tap}
+            >
+              <FaHandsHelping className="mr-2" />
+              {t('contribute_now')}
+            </motion.button>
+            <motion.button
+                className="flex items-center justify-center py-3 px-6 bg-gray-100 text-black border border-gray-300 rounded-md shadow-lg hover:bg-gray-200 transition-all duration-300"
+                whileTap={buttonClick.tap}
+            >
+              <FaLeaf className="mr-2" />
+              {t('learn_more')}
+            </motion.button>
+          </motion.div>
         </motion.div>
-      </motion.div>
-    </section>
+      </section>
   );
 };
 
