@@ -1,7 +1,7 @@
-import "./globals.css";
+import "../globals.css";
 import Navbar from "@/components/Navbar";
 import {Footer} from "@/components/Footer";
-
+import {locales} from "@/i18nConfig";
 
 
 export const metadata = {
@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang={locales}>
       <body
         className={`antialiased`}
       >

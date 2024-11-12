@@ -6,9 +6,13 @@ import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 import * as React from "react";
 import { SkeletonAboutUs } from "@/components/skeleton/SkeletonAboutUs";
+import { useTranslation } from "react-i18next";
+import { useCurrentLocale } from "next-i18n-router/client";
+import i18nConfig from "@/i18nConfig";
 
 const AboutUs = React.memo(() => {
-    const { locale } = useRouter();
+    const { t } = useTranslation();
+    const locale = useCurrentLocale(i18nConfig);
     const [aboutData, setAboutData] = useState(null);
     const [error, setError] = useState(null);
 
@@ -22,7 +26,7 @@ const AboutUs = React.memo(() => {
     const fetchAboutData = useCallback(async () => {
         try {
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?populate=*`
+                `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?locale=${locale}&populate=*`
             );
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -70,7 +74,7 @@ const AboutUs = React.memo(() => {
                     transition={{ duration: 1, delay: 0.3 }}
                     ref={ref2}
                 >
-                    <h2 className="text-5xl font-extrabold text-gray-800 mb-4">About Us</h2>
+                    <h2 className="text-5xl font-extrabold text-gray-800 mb-4">{t('about_us')}</h2>
                     <p className="text-xl text-gray-700 leading-relaxed">{who_we_are}</p>
                 </motion.div>
 
@@ -84,7 +88,7 @@ const AboutUs = React.memo(() => {
                         transition={{ duration: 1, delay: 0.7 }}
                         ref={ref3}
                     >
-                        <h3 className="text-4xl font-bold text-gray-800 mb-4">Our Mission</h3>
+                        <h3 className="text-4xl font-bold text-gray-800 mb-4">{t('our_mission')}</h3>
                         <p className="text-lg text-gray-700 leading-relaxed">{mission}</p>
                     </motion.div>
 
@@ -133,7 +137,7 @@ const AboutUs = React.memo(() => {
                         transition={{ duration: 1, delay: 0.5 }}
                         ref={ref6}
                     >
-                        <h3 className="text-4xl font-bold text-gray-800 mb-4">Our Vision</h3>
+                        <h3 className="text-4xl font-bold text-gray-800 mb-4">{t('our_vision')}</h3>
                         <p className="text-lg text-gray-700 leading-relaxed">{vision}</p>
                     </motion.div>
                 </div>

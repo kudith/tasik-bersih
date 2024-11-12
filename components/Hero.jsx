@@ -5,6 +5,9 @@ import axios from "axios";
 import { FaLeaf, FaHandsHelping } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { SkeletonHero } from "@/components/skeleton/SkeletonHero";
+import { useCurrentLocale } from "next-i18n-router/client";
+import i18nConfig from "@/i18nConfig";
+import { useTranslation } from "react-i18next";
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -21,23 +24,26 @@ const buttonClick = {
 };
 
 const Hero = () => {
+  const { t } = useTranslation();
   const [heroData, setHeroData] = useState(null);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const locale = useCurrentLocale(i18nConfig);
 
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/hero?populate=*`
+          `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/hero?locale=${locale}`
         );
         setHeroData(response.data.data);
+        console.log(response.data.data);
       } catch (error) {
         setError("Failed to fetch hero data. Please try again later.");
       }
     };
     fetchHeroData();
-  }, []);
+  }, [locale]);
 
   if (error) return Error(error);
 
@@ -81,14 +87,14 @@ const Hero = () => {
             whileTap={buttonClick.tap}
           >
             <FaHandsHelping className="mr-2" />
-            Contribute Now
+            {t('contribute_now')}
           </motion.button>
           <motion.button
             className="flex items-center justify-center py-3 px-6 bg-gray-100 text-black border border-gray-300 rounded-md shadow-lg hover:bg-gray-200 transition-all duration-300"
             whileTap={buttonClick.tap}
           >
             <FaLeaf className="mr-2" />
-            Learn More
+            {t('learn_more')}
           </motion.button>
         </motion.div>
       </motion.div>

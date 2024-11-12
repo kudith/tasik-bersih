@@ -13,6 +13,7 @@ import {
 import { RiTeamFill } from "react-icons/ri";
 import { MdVolunteerActivism } from "react-icons/md";
 import { Button } from "@/components/ui/button";
+import ToggleLanguage from "@/components/ToggleLanguage";
 
 const navItems = [
   { name: "Home", path: "#home", icon: <FaHome /> },
@@ -105,6 +106,7 @@ const Navbar = React.memo(() => {
                     <span>{item.name}</span>
                   </p>
               ))}
+              <ToggleLanguage/>
               <Button onClick={handleDonateClick}>Contribute Now</Button>
             </div>
 
