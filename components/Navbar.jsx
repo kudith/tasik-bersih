@@ -33,47 +33,46 @@ const Navbar = React.memo(() => {
   }, []);
 
 
-  const handleScrollOrNavigate = React.useCallback(
-      (path) => {
-        const offset = 100; // Adjust offset as needed for your header height
+ const handleScrollOrNavigate = React.useCallback(
+  (path) => {
+    const offset = 100; // Adjust offset as needed for your header height
 
-        if (path.startsWith("#")) {
-          // Smooth scroll for links on the landing page
-          if (pathname === "/") {
-            const element = document.querySelector(path);
-            if (element) {
-              const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-              const offsetPosition = elementPosition - offset;
+    if (path.startsWith("#")) {
+      // Smooth scroll for links on the landing page
+      if (pathname === "/" || pathname.startsWith("/id")) {
+        const element = document.querySelector(path);
+        if (element) {
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - offset;
 
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth",
-              });
-            }
-          } else {
-            // Navigate to home first, then scroll with offset
-            router.push("/");
-            setTimeout(() => {
-              const element = document.querySelector(path);
-              if (element) {
-                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-                const offsetPosition = elementPosition - offset;
-
-                window.scrollTo({
-                  top: offsetPosition,
-                  behavior: "smooth",
-                });
-              }
-            }, 100); // Slight delay for page load
-          }
-        } else {
-          // Navigate normally for other pages
-          router.push(path);
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
         }
-        setIsOpen(false);
-      },
-      [router, pathname]
-  );
+      } else {
+        // Navigate to home first, then scroll with offset
+        router.push("/").then(() => {
+          const element = document.querySelector(path);
+          if (element) {
+            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: "smooth",
+            });
+          }
+        });
+      }
+    } else {
+      // Navigate normally for other pages
+      router.push(path);
+    }
+    setIsOpen(false);
+  },
+  [router, pathname]
+);
 
 
   const handleDonateClick = React.useCallback(() => {
