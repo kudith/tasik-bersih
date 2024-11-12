@@ -10,7 +10,9 @@ export function Footer() {
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* About Section */}
                 <div>
-                    <h2 className="text-2xl font-bold mb-4">About Us</h2>
+                    <h2 className="text-2xl font-bold mb-4">kalangsari
+                    <span className="text-kalang">Pride</span>
+                    </h2>
                     <p className="text-gray-400 mb-4">
                         We are committed to making a positive impact in the community by bringing people together for meaningful causes. Join us in our mission to create a better world through service, support, and kindness.
                     </p>
@@ -106,7 +108,7 @@ export function Footer() {
 
                 {/* Footer Bottom Text */}
                 <div className="mt-8 text-center text-gray-400 text-sm">
-                    &copy; {new Date().getFullYear()} Our Organization. All rights reserved.
+                    &copy; {new Date().getFullYear()} kalangsariPride. All rights reserved.
                 </div>
             </div>
         </footer>

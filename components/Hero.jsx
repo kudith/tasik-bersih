@@ -65,7 +65,7 @@ const Hero = () => {
         </motion.h1>
 
         <motion.p
-          className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl"
+          className="text-lg md:text-xl text-gray-60 leading-relaxed max-w-xl"
           variants={slideUp}
         >
           {subtittle}

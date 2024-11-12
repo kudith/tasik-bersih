@@ -87,7 +87,8 @@ const Navbar = React.memo(() => {
             <div className="flex-shrink-0">
               <Link href="/">
                 <h1 className="text-2xl font-bold text-primary font-inknut">
-                  kalangsariPride
+                  kalangsari
+                  <span className="text-kalang font-bold">Pride</span>
                 </h1>
               </Link>
             </div>
