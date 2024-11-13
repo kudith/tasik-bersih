@@ -105,7 +105,7 @@ export function VolunteerForm() {
     }, [registrationType, setValue]);
 
     const onSubmit = useCallback(async (data) => {
-        console.log("Form data submitted:", data);
+        // console.log("Form data submitted:", data);
 
         setIsLoading(true); // Show the loading dialog
 

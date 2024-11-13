@@ -63,7 +63,7 @@ const DonationForm = React.memo(() => {
     const nameToDisplay = data.isAnonymous ? "Anonymous" : data.fullName;
 
     try {
-      console.log('Submitting donation data:', data);
+      // console.log('Submitting donation data:', data);
       const midtransResponse = await fetch('/api/transaction', {
         method: 'POST',
         headers: {
@@ -79,21 +79,21 @@ const DonationForm = React.memo(() => {
       });
 
       const midtransResult = await midtransResponse.json();
-      console.log('Midtrans response:', midtransResult);
+      // console.log('Midtrans response:', midtransResult);
 
       if (midtransResponse.ok) {
         setToken(midtransResult.token);
-        console.log('Midtrans Token:', midtransResult.token);
+        // console.log('Midtrans Token:', midtransResult.token);
 
         const script = document.createElement('script');
         script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
         script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
         script.onload = async () => {
           setIsLoading(false);
-          console.log('Midtrans Token before pay:', midtransResult.token);
+          // console.log('Midtrans Token before pay:', midtransResult.token);
           window.snap.pay(midtransResult.token, {
             onSuccess: async function (result) {
-              console.log('Payment success:', result);
+              // console.log('Payment success:', result);
               const strapiResponse = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/donations`, {
                 method: 'POST',
                 headers: {
@@ -113,10 +113,10 @@ const DonationForm = React.memo(() => {
               });
 
               const strapiResult = await strapiResponse.json();
-              console.log('Strapi response:', strapiResult);
+              // console.log('Strapi response:', strapiResult);
 
               if (strapiResponse.ok) {
-                console.log('Transaction successful and data saved to Strapi!');
+                // console.log('Transaction successful and data saved to Strapi!');
                 await fetch('/api/confirmationDonateMail', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -129,17 +129,17 @@ const DonationForm = React.memo(() => {
                 });
               } else {
                 console.error('Failed to save transaction data to Strapi:', strapiResult);
-                console.log('Transaction successful, but failed to save data to Strapi.');
+                // console.log('Transaction successful, but failed to save data to Strapi.');
               }
             },
             onPending: function (result) {
-              console.log("Waiting for your payment!", result);
+              // console.log("Waiting for your payment!", result);
             },
             onError: function (result) {
               console.error("Payment failed!", result);
             },
             onClose: function () {
-              console.log("Payment modal closed!");
+              // console.log("Payment modal closed!");
             }
           });
         };
@@ -149,7 +149,7 @@ const DonationForm = React.memo(() => {
       }
     } catch (error) {
       console.error('Error:', error);
-      console.log('An error occurred while processing the transaction');
+      // console.log('An error occurred while processing the transaction');
     } finally {
       setIsLoading(false);
     }
