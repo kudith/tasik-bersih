@@ -4,50 +4,43 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import Image from "next/legacy/image";
 import TeamSkeleton from "@/components/skeleton/TeamSkeleton";
+import { useTranslation } from "react-i18next";
+import useSWR from "swr";
 
 const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
 };
 
+const fetcher = url => axios.get(url).then(res => res.data);
+
 const Team = () => {
-    const [teamData, setTeamData] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { t } = useTranslation('team');
+    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/teams?populate=*`, fetcher);
 
-    useEffect(() => {
-        const fetchTeamData = async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/teams?populate=*`
-                );
-                setTeamData(response.data.data);
-            } catch (error) {
-                setError("Failed to fetch team data. Please try again later.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchTeamData();
-    }, []);
+    if (error) {
+        console.error("Failed to fetch team data:", error);
+        return <div className="text-center text-red-500">Failed to fetch team data. Please try again later.</div>;
+    }
 
-    if (error) return <div className="text-center text-red-500">{error}</div>;
+    if (!data) {
+        // console.log("Loading team data...");
+        return <TeamSkeleton count={8} />;
+    }
 
-    // Show skeleton loader while data is loading
-    if (loading) return <TeamSkeleton count={teamData.length > 0 ? teamData.length : 8} />;
+    const teamData = data.data;
+    // console.log("Fetched team data:", teamData);
 
     return (
         <section id="team" className="py-16 min-h-screen">
             <div className="container mx-auto px-6">
-                {/* Headline */}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-semibold text-gray-800 mb-4">Meet Our Team</h2>
+                    <h2 className="text-4xl font-semibold text-gray-800 mb-4">{t('headline')}</h2>
                     <p className="text-lg text-gray-600 max-w-xl mx-auto">
-                        Dedicated individuals who contribute to making a difference.
+                        {t('description')}
                     </p>
                 </div>
 
-                {/* Team Cards */}
                 <motion.div
                     className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-20"
                     initial="hidden"
@@ -62,7 +55,7 @@ const Team = () => {
                         >
                             <div className="w-48 h-48 relative overflow-hidden full shadow-lg">
                                 <Image
-                                    src={image.url}
+                                    src={image?.url}
                                     alt={name}
                                     sizes={500}
                                     priority={true}
