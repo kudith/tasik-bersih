@@ -3,7 +3,8 @@ import Navbar from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import i18nConfig from "../../i18nConfig";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";  // Import Suspense
+import initTranslations from "../i18n";
+import TranslationsProvider from "@/components/TranslationsProvider";
 
 export const metadata = {
   title: "kalangsariPride",
@@ -17,16 +18,21 @@ export default async function RootLayout({ children, params }) {
     notFound();
   }
 
+  const { resources } = await initTranslations(locale, ['navbar', 'footer']);
+
   return (
-      <html lang={locale}>
+    <html lang={locale}>
       <body className="antialiased">
-      <Navbar />
-      {children}
-      {/* Gunakan Suspense untuk menunda rendering Footer */}
-      <Suspense fallback={<div>Loading footer...</div>}>
-        <Footer />
-      </Suspense>
+        <TranslationsProvider
+          namespaces={['navbar', 'footer']}
+          locale={locale}
+          resources={resources}
+        >
+          <Navbar />
+          {children}
+          <Footer />
+        </TranslationsProvider>
       </body>
-      </html>
+    </html>
   );
 }

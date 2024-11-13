@@ -2,27 +2,28 @@ import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/com
 import { motion } from "framer-motion";
 import { FaHandsHelping, FaUsers, FaLightbulb, FaChartLine } from "react-icons/fa";
 import { useInView } from "react-intersection-observer";
+import { useTranslation } from "react-i18next";
 
 const benefits = [
   {
     icon: FaHandsHelping,
-    title: "Gain Valuable Experience",
-    text: "Engage in meaningful work that boosts your professional journey and enriches your resume.",
+    titleKey: "gain_valuable_experience",
+    textKey: "gain_valuable_experience_text",
   },
   {
     icon: FaUsers,
-    title: "Build Lasting Connections",
-    text: "Meet people with shared interests and expand your network for future opportunities.",
+    titleKey: "build_lasting_connections",
+    textKey: "build_lasting_connections_text",
   },
   {
     icon: FaLightbulb,
-    title: "Impact the Community",
-    text: "Make a positive difference, creating lasting changes in people’s lives and the community.",
+    titleKey: "impact_the_community",
+    textKey: "impact_the_community_text",
   },
   {
     icon: FaChartLine,
-    title: "Develop New Skills",
-    text: "Challenge yourself to learn new skills that can benefit your personal and professional growth.",
+    titleKey: "develop_new_skills",
+    textKey: "develop_new_skills_text",
   },
 ];
 
@@ -31,6 +32,7 @@ export function VolunteerBenefits() {
     triggerOnce: true,
     threshold: 0.1,
   });
+  const { t } = useTranslation();
 
   return (
     <motion.div
@@ -42,9 +44,9 @@ export function VolunteerBenefits() {
     >
       <Card className="shadow-xl rounded-lg overflow-hidden">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold mb-2">Why Volunteer?</CardTitle>
+          <CardTitle className="text-2xl font-bold mb-2">{t("why_volunteer")}</CardTitle>
           <CardDescription className="text-xl opacity-90 hidden md:block">
-            Discover how volunteering benefits you and the community
+            {t("discover_volunteering_benefits")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -61,8 +63,8 @@ export function VolunteerBenefits() {
                   <benefit.icon className="text-3xl" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold">{benefit.title}</h3>
-                  <p className="text-gray-500 opacity-90 hidden md:block">{benefit.text}</p>
+                  <h3 className="text-lg font-semibold">{t(benefit.titleKey)}</h3>
+                  <p className="text-gray-500 opacity-90 hidden md:block">{t(benefit.textKey)}</p>
                 </div>
               </motion.li>
             ))}

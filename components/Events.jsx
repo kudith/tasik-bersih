@@ -1,9 +1,9 @@
 "use client";
 import * as React from "react";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import Autoplay from "embla-carousel-autoplay";
-import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
     Carousel,
     CarouselContent,
@@ -12,33 +12,36 @@ import {
     CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 import {
     CalendarIcon,
     MapPinIcon,
     ClockIcon,
 } from "@heroicons/react/24/outline";
-import {SkeletonEvent} from "@/components/skeleton/SkeletonEvent";
-import {useInView} from "react-intersection-observer";
+import { SkeletonEvent } from "@/components/skeleton/SkeletonEvent";
+import { useInView } from "react-intersection-observer";
+import useSWR from "swr";
+import axios from "axios";
+import { useTranslation } from "react-i18next";
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
+const fetcher = url => axios.get(url).then(res => res.data);
 
 const headingVariants = {
-    hidden: {opacity: 0, y: -50},
-    visible: {opacity: 1, y: 0, transition: {duration: 0.8, ease: "easeOut"}},
+    hidden: { opacity: 0, y: -50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
 };
 
 const eventItemVariants = {
-    hidden: {opacity: 0, scale: 0.95},
+    hidden: { opacity: 0, scale: 0.95 },
     visible: {
         opacity: 1,
         scale: 1,
-        transition: {duration: 0.5, ease: "easeInOut"},
+        transition: { duration: 0.5, ease: "easeInOut" },
     },
 };
 
-const EventItem = ({event, index, onVolunteerClick}) => {
-    const {ref, inView} = useInView({
+const EventItem = ({ event, index, onVolunteerClick }) => {
+    const { ref, inView } = useInView({
         triggerOnce: true,
         threshold: 0.1,
     });
@@ -57,8 +60,7 @@ const EventItem = ({event, index, onVolunteerClick}) => {
     });
 
     return (
-        <CarouselItem key={event.id} className="flex-shrink-0 w-full p-6"
-                      ref={ref}>
+        <CarouselItem key={event.id} className="flex-shrink-0 w-full p-6" ref={ref}>
             <motion.div
                 initial="hidden"
                 animate={inView ? "visible" : "hidden"}
@@ -67,25 +69,20 @@ const EventItem = ({event, index, onVolunteerClick}) => {
                 <Card className="overflow-hidden md:p-8 p-4">
                     <CardContent className="p-1">
                         <div className="flex flex-col md:flex-row">
-                            <div
-                                className="w-full md:w-1/2 space-y-4 mb-4 md:mb-0">
-                                <div
-                                    className="flex items-center text-teal-700">
-                                    <CalendarIcon className="w-5 h-5 mr-2"/>
-                                    <span
-                                        className="text-lg font-semibold">{formattedDate}</span>
+                            <div className="w-full md:w-1/2 space-y-4 mb-4 md:mb-0">
+                                <div className="flex items-center text-teal-700">
+                                    <CalendarIcon className="w-5 h-5 mr-2" />
+                                    <span className="text-lg font-semibold">{formattedDate}</span>
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-800 mb-2">
                                     {event.event_name}
                                 </h3>
-                                <div
-                                    className="flex items-center text-gray-600">
-                                    <MapPinIcon className="w-5 h-5 mr-2"/>
+                                <div className="flex items-center text-gray-600">
+                                    <MapPinIcon className="w-5 h-5 mr-2" />
                                     <span>{event.location}</span>
                                 </div>
-                                <div
-                                    className="flex items-center text-gray-600">
-                                    <ClockIcon className="w-5 h-5 mr-2"/>
+                                <div className="flex items-center text-gray-600">
+                                    <ClockIcon className="w-5 h-5 mr-2" />
                                     <span>{eventTime} - Selesai</span>
                                 </div>
                                 <Button
@@ -95,14 +92,13 @@ const EventItem = ({event, index, onVolunteerClick}) => {
                                     Volunteer Now
                                 </Button>
                             </div>
-                            <div
-                                className="w-full md:w-10/12 relative h-48 md:h-56 overflow-hidden rounded-lg">
+                            <div className="w-full md:w-10/12 relative h-48 md:h-56 overflow-hidden rounded-lg">
                                 <Image
                                     src={imageUrl}
                                     alt={event.event_name}
                                     fill
                                     sizes="80vw"
-                                    style={{objectFit: "cover"}}
+                                    style={{ objectFit: "cover" }}
                                     loading="lazy"
                                 />
                             </div>
@@ -116,12 +112,13 @@ const EventItem = ({event, index, onVolunteerClick}) => {
 
 const EventCarousel = React.memo(() => {
     const router = useRouter();
+    const { i18n } = useTranslation();
+    const locale = i18n.language;
     const plugin = React.useRef(
-        Autoplay({delay: 3000, stopOnInteraction: true})
+        Autoplay({ delay: 3000, stopOnInteraction: true })
     );
-    const [events, setEvents] = React.useState([]);
-    const [loading, setLoading] = React.useState(true);
-    const [error, setError] = React.useState(null);
+
+    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?locale=${locale}&populate=*`, fetcher);
 
     const handleVolunteerClick = React.useCallback(
         (eventName) => {
@@ -130,45 +127,16 @@ const EventCarousel = React.memo(() => {
         [router]
     );
 
-    React.useEffect(() => {
-        const fetchEventData = async () => {
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?populate=*`
-                );
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const result = await response.json();
-                setEvents(result.data);
-                localStorage.setItem("eventData", JSON.stringify(result.data));
-            } catch (error) {
-                setError("Failed to fetch event data. Please try again later.");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        const storedEventData = localStorage.getItem("eventData");
-        if (storedEventData) {
-            setEvents(JSON.parse(storedEventData));
-            setLoading(false);
-        } else {
-            fetchEventData();
-        }
-    }, []);
-
     if (error) return <p className="text-center">{error}</p>;
-    if (loading) return <SkeletonEvent count={events.length > 0 ? events.length : 8} />;
+    if (!data) return <SkeletonEvent count={8} />;
+
+    const events = data.data;
 
     if (!events.length)
         return <p className="text-center">No events available.</p>;
 
     return (
-        <div
-            id="events"
-            className="flex flex-col items-center justify-center my-20"
-        >
+        <div id="events" className="flex flex-col items-center justify-center my-20">
             <motion.h1
                 className="text-3xl font-bold mb-8 text-teal-700 text-center"
                 initial="hidden"

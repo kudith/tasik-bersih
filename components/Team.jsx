@@ -5,45 +5,31 @@ import { motion } from "framer-motion";
 import Image from "next/legacy/image";
 import TeamSkeleton from "@/components/skeleton/TeamSkeleton";
 import { useTranslation } from "react-i18next";
+import useSWR from "swr";
 
 const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
 };
 
+const fetcher = url => axios.get(url).then(res => res.data);
+
 const Team = () => {
     const { t } = useTranslation('team');
-    const [teamData, setTeamData] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/teams?populate=*`, fetcher);
 
-    useEffect(() => {
-        const fetchTeamData = async () => {
-            try {
-                const response = await axios.get(
-                    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/teams?populate=*`
-                );
-                setTeamData(response.data.data);
-                localStorage.setItem("teamData", JSON.stringify(response.data.data));
-            } catch (error) {
-                setError("Failed to fetch team data. Please try again later.");
-            } finally {
-                setLoading(false);
-            }
-        };
+    if (error) {
+        console.error("Failed to fetch team data:", error);
+        return <div className="text-center text-red-500">Failed to fetch team data. Please try again later.</div>;
+    }
 
-        const storedTeamData = localStorage.getItem("teamData");
-        if (storedTeamData) {
-            setTeamData(JSON.parse(storedTeamData));
-            setLoading(false);
-        } else {
-            fetchTeamData();
-        }
-    }, []);
+    if (!data) {
+        console.log("Loading team data...");
+        return <TeamSkeleton count={8} />;
+    }
 
-    if (error) return <div className="text-center text-red-500">{error}</div>;
-
-    if (loading) return <TeamSkeleton count={teamData.length > 0 ? teamData.length : 8} />;
+    const teamData = data.data;
+    console.log("Fetched team data:", teamData);
 
     return (
         <section id="team" className="py-16 min-h-screen">
@@ -69,7 +55,7 @@ const Team = () => {
                         >
                             <div className="w-48 h-48 relative overflow-hidden full shadow-lg">
                                 <Image
-                                    src={image.url}
+                                    src={image?.url}
                                     alt={name}
                                     sizes={500}
                                     priority={true}
