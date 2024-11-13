@@ -37,12 +37,18 @@ const Hero = () => {
             `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/hero?locale=${locale}`
         );
         setHeroData(response.data.data);
-        console.log(response.data.data);
+        localStorage.setItem(`heroData_${locale}`, JSON.stringify(response.data.data));
       } catch (error) {
         setError("Failed to fetch hero data. Please try again later.");
       }
     };
-    fetchHeroData();
+
+    const storedHeroData = localStorage.getItem(`heroData_${locale}`);
+    if (storedHeroData) {
+      setHeroData(JSON.parse(storedHeroData));
+    } else {
+      fetchHeroData();
+    }
   }, [locale]);
 
   if (error) return Error(error);

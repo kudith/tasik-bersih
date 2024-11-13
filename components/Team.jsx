@@ -22,13 +22,21 @@ const Team = () => {
                     `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/teams?populate=*`
                 );
                 setTeamData(response.data.data);
+                localStorage.setItem("teamData", JSON.stringify(response.data.data));
             } catch (error) {
                 setError("Failed to fetch team data. Please try again later.");
             } finally {
                 setLoading(false);
             }
         };
-        fetchTeamData();
+
+        const storedTeamData = localStorage.getItem("teamData");
+        if (storedTeamData) {
+            setTeamData(JSON.parse(storedTeamData));
+            setLoading(false);
+        } else {
+            fetchTeamData();
+        }
     }, []);
 
     if (error) return <div className="text-center text-red-500">{error}</div>;

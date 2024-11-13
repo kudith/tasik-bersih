@@ -1,5 +1,4 @@
 "use client";
-import useSWR from "swr";
 import * as React from "react";
 import {useRouter} from "next/navigation";
 import Autoplay from "embla-carousel-autoplay";
@@ -120,14 +119,9 @@ const EventCarousel = React.memo(() => {
     const plugin = React.useRef(
         Autoplay({delay: 3000, stopOnInteraction: true})
     );
-    const {data, error} = useSWR(
-        `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?populate=*`,
-        fetcher,
-        {
-            revalidateOnFocus: false,
-            dedupingInterval: 60000,
-        }
-    );
+    const [events, setEvents] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
 
     const handleVolunteerClick = React.useCallback(
         (eventName) => {
@@ -136,10 +130,37 @@ const EventCarousel = React.memo(() => {
         [router]
     );
 
-    if (error) return <p className="text-center">Failed to load events.</p>;
-    if (!data) return <SkeletonEvent/>;
+    React.useEffect(() => {
+        const fetchEventData = async () => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?populate=*`
+                );
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const result = await response.json();
+                setEvents(result.data);
+                localStorage.setItem("eventData", JSON.stringify(result.data));
+            } catch (error) {
+                setError("Failed to fetch event data. Please try again later.");
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    const events = data.data;
+        const storedEventData = localStorage.getItem("eventData");
+        if (storedEventData) {
+            setEvents(JSON.parse(storedEventData));
+            setLoading(false);
+        } else {
+            fetchEventData();
+        }
+    }, []);
+
+    if (error) return <p className="text-center">{error}</p>;
+    if (loading) return <SkeletonEvent count={events.length > 0 ? events.length : 8} />;
+
     if (!events.length)
         return <p className="text-center">No events available.</p>;
 
