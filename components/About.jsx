@@ -1,16 +1,16 @@
 "use client";
-import { useEffect, useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from "framer-motion";
 import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
 import * as React from "react";
 import { SkeletonAboutUs } from "@/components/skeleton/SkeletonAboutUs";
+import useSWR from "swr";
+import axios from "axios";
+
+const fetcher = url => axios.get(url).then(res => res.data);
 
 const AboutUs = React.memo(() => {
-    const { locale } = useRouter();
-    const [aboutData, setAboutData] = useState(null);
-    const [error, setError] = useState(null);
+    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?populate=*`, fetcher);
 
     const [ref1, inView1] = useInView({ triggerOnce: true });
     const [ref2, inView2] = useInView({ triggerOnce: true });
@@ -19,29 +19,11 @@ const AboutUs = React.memo(() => {
     const [ref5, inView5] = useInView({ triggerOnce: true });
     const [ref6, inView6] = useInView({ triggerOnce: true });
 
-    const fetchAboutData = useCallback(async () => {
-        try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?populate=*`
-            );
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const result = await response.json();
-            setAboutData(result.data);
-        } catch (error) {
-            setError(error);
-        }
-    }, [locale]);
-
-    useEffect(() => {
-        fetchAboutData();
-    }, [fetchAboutData]);
-
     if (error) return <p>Error loading data: {error.message}</p>;
-    if (!aboutData) return <SkeletonAboutUs />;
+    if (!data) return <SkeletonAboutUs />;
 
-    const { image_1, image_2, image_3, who_we_are, vision, mission } = aboutData;
+    const { image_1, image_2, image_3, who_we_are, vision, mission } = data.data;
+
     return (
         <section id="about" className="py-16 px-4 md:px-8 bg-gray-50 text-gray-900">
             <div className="container max-w-6xl mx-auto">
