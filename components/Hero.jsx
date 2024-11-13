@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import {Suspense, useEffect, useState} from "react";
 import { motion } from "framer-motion";
 import axios from "axios";
 import { FaLeaf, FaHandsHelping } from "react-icons/fa";
@@ -57,6 +57,8 @@ const Hero = () => {
 
   return (
       <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8">
+        <Suspense>
+
         <motion.div
             className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6"
             initial="hidden"
@@ -98,6 +100,7 @@ const Hero = () => {
             </motion.button>
           </motion.div>
         </motion.div>
+        </Suspense>
       </section>
   );
 };

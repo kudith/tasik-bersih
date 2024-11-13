@@ -33,46 +33,48 @@ const Navbar = React.memo(() => {
   }, []);
 
 
- const handleScrollOrNavigate = React.useCallback(
-  (path) => {
-    const offset = 100; // Adjust offset as needed for your header height
+  const handleScrollOrNavigate = React.useCallback(
+      (path) => {
+        const offset = 100; // Adjust offset as needed for your header height
+        const basePath = pathname.startsWith("/id") ? "/id" : "";
 
-    if (path.startsWith("#")) {
-      // Smooth scroll for links on the landing page
-      if (pathname === "/" || pathname.startsWith("/id")) {
-        const element = document.querySelector(path);
-        if (element) {
-          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-          const offsetPosition = elementPosition - offset;
+        if (path.startsWith("#")) {
+          // Smooth scroll for links on the landing page
+          if (pathname === "/" || pathname === "/id") {
+            const element = document.querySelector(path);
+            if (element) {
+              const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+              const offsetPosition = elementPosition - offset;
 
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          });
-        }
-      } else {
-        // Navigate to home first, then scroll with offset
-        router.push("/").then(() => {
-          const element = document.querySelector(path);
-          if (element) {
-            const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-            const offsetPosition = elementPosition - offset;
+              window.scrollTo({
+                top: offsetPosition,
+                behavior: "smooth",
+              });
+            }
+          } else {
+            // Navigate to home with language prefix first, then scroll with offset
+            router.push(`${basePath}/`).then(() => {
+              const element = document.querySelector(path);
+              if (element) {
+                const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                const offsetPosition = elementPosition - offset;
 
-            window.scrollTo({
-              top: offsetPosition,
-              behavior: "smooth",
+                window.scrollTo({
+                  top: offsetPosition,
+                  behavior: "smooth",
+                });
+              }
             });
           }
-        });
-      }
-    } else {
-      // Navigate normally for other pages
-      router.push(path);
-    }
-    setIsOpen(false);
-  },
-  [router, pathname]
-);
+        } else {
+          // Navigate normally for other pages, including prefixed paths
+          router.push(`${basePath}${path}`);
+        }
+        setIsOpen(false);
+      },
+      [router, pathname]
+  );
+
 
 
   const handleDonateClick = React.useCallback(() => {

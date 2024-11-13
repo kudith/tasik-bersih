@@ -1,38 +1,59 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import i18nConfig from "@/i18nConfig";
+import { US, ID } from "country-flag-icons/react/3x2"; // Import flags for US and Indonesia
 
 export default function ToggleLanguage() {
-  const { i18n } = useTranslation();
-  const currentLocale = i18n.language;
   const router = useRouter();
   const currentPathname = usePathname();
+  const defaultLocale = i18nConfig.defaultLocale;
+  const [currentLocale, setCurrentLocale] = useState(defaultLocale);
 
-  const handleChange = (e) => {
-    const newLocale = e.target.value;
+  // Set current locale based on URL path on initial load
+  useEffect(() => {
+    const pathLocale = currentPathname.startsWith("/id") ? "id" : "en";
+    setCurrentLocale(pathLocale);
+  }, [currentPathname]);
 
+  const handleChange = (newLocale) => {
     // Set cookie for next-i18n-router
     const days = 30;
     const date = new Date();
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     document.cookie = `NEXT_LOCALE=${newLocale};expires=${date.toUTCString()};path=/`;
 
-    // Redirect to the new locale path
-    if (currentLocale === i18nConfig.defaultLocale && !i18nConfig.prefixDefault) {
-      router.push(`/${newLocale}${currentPathname}`);
-    } else {
-      router.push(currentPathname.replace(`/${currentLocale}`, `/${newLocale}`));
-    }
+    // Update URL path based on the selected locale
+    const newPath =
+        newLocale === defaultLocale && !i18nConfig.prefixDefault
+            ? currentPathname.replace(/^\/(id)/, "") || "/" // remove locale prefix for default
+            : `/${newLocale}${currentPathname.replace(/^\/(id|en)/, "")}`;
 
+    router.push(newPath);
     router.refresh();
   };
 
   return (
-      <select onChange={handleChange} value={currentLocale}>
-        <option value="en">English</option>
-        <option value="id">Indonesian</option>
-      </select>
+      <Select onValueChange={handleChange} value={currentLocale}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue placeholder="Select Language" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="en">
+            <US title="United States" className="inline-block mr-2 w-5 h-5" /> English
+          </SelectItem>
+          <SelectItem value="id">
+            <ID title="Indonesia" className="inline-block mr-2 w-5 h-5" /> Indonesian
+          </SelectItem>
+        </SelectContent>
+      </Select>
   );
 }
