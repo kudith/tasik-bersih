@@ -24,12 +24,12 @@ const Team = () => {
     }
 
     if (!data) {
-        console.log("Loading team data...");
+        // console.log("Loading team data...");
         return <TeamSkeleton count={8} />;
     }
 
     const teamData = data.data;
-    console.log("Fetched team data:", teamData);
+    // console.log("Fetched team data:", teamData);
 
     return (
         <section id="team" className="py-16 min-h-screen">
