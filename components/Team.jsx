@@ -4,6 +4,7 @@ import axios from "axios";
 import { motion } from "framer-motion";
 import Image from "next/legacy/image";
 import TeamSkeleton from "@/components/skeleton/TeamSkeleton";
+import { useTranslation } from "react-i18next";
 
 const fadeIn = {
     hidden: { opacity: 0 },
@@ -11,6 +12,7 @@ const fadeIn = {
 };
 
 const Team = () => {
+    const { t } = useTranslation('team');
     const [teamData, setTeamData] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -41,21 +43,18 @@ const Team = () => {
 
     if (error) return <div className="text-center text-red-500">{error}</div>;
 
-    // Show skeleton loader while data is loading
     if (loading) return <TeamSkeleton count={teamData.length > 0 ? teamData.length : 8} />;
 
     return (
         <section id="team" className="py-16 min-h-screen">
             <div className="container mx-auto px-6">
-                {/* Headline */}
                 <div className="text-center mb-12">
-                    <h2 className="text-4xl font-semibold text-gray-800 mb-4">Meet Our Team</h2>
+                    <h2 className="text-4xl font-semibold text-gray-800 mb-4">{t('headline')}</h2>
                     <p className="text-lg text-gray-600 max-w-xl mx-auto">
-                        Dedicated individuals who contribute to making a difference.
+                        {t('description')}
                     </p>
                 </div>
 
-                {/* Team Cards */}
                 <motion.div
                     className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 my-20"
                     initial="hidden"
