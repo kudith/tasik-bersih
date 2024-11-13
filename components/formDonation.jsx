@@ -7,7 +7,7 @@ import { donationSchema } from "@/lib/formschema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle} from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -36,6 +36,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { LoadingModal } from "@/components/ui/LoadingModal";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const DonationForm = React.memo(() => {
   const [selectedAmount, setSelectedAmount] = useState(0);
@@ -58,101 +59,101 @@ const DonationForm = React.memo(() => {
   const { handleSubmit, setValue, formState: { errors, isValid } } = form;
 
   const onSubmit = useCallback(async (data) => {
-  setIsLoading(true);
-  const nameToDisplay = data.isAnonymous ? "Anonymous" : data.fullName;
+    setIsLoading(true);
+    const nameToDisplay = data.isAnonymous ? "Anonymous" : data.fullName;
 
-  try {
-    console.log('Submitting donation data:', data);
-    const midtransResponse = await fetch('/api/transaction', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'CSRF-Token': token,
-      },
-      body: JSON.stringify({
-        donationAmount: data.donationAmount,
-        fullName: nameToDisplay,
-        phoneNumber: data.phoneNumber,
-        email: data.email,
-      }),
-    });
+    try {
+      console.log('Submitting donation data:', data);
+      const midtransResponse = await fetch('/api/transaction', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'CSRF-Token': token,
+        },
+        body: JSON.stringify({
+          donationAmount: data.donationAmount,
+          fullName: nameToDisplay,
+          phoneNumber: data.phoneNumber,
+          email: data.email,
+        }),
+      });
 
-    const midtransResult = await midtransResponse.json();
-    console.log('Midtrans response:', midtransResult);
+      const midtransResult = await midtransResponse.json();
+      console.log('Midtrans response:', midtransResult);
 
-    if (midtransResponse.ok) {
-      setToken(midtransResult.token);
-      console.log('Midtrans Token:', midtransResult.token);
+      if (midtransResponse.ok) {
+        setToken(midtransResult.token);
+        console.log('Midtrans Token:', midtransResult.token);
 
-      const script = document.createElement('script');
-      script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-      script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
-      script.onload = async () => {
-        setIsLoading(false);
-        console.log('Midtrans Token before pay:', midtransResult.token);
-        window.snap.pay(midtransResult.token, {
-          onSuccess: async function (result) {
-            console.log('Payment success:', result);
-            const strapiResponse = await fetch('http://localhost:1337/api/donations', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`,
-              },
-              body: JSON.stringify({
-                data: {
-                  full_name: nameToDisplay,
-                  phone_number: data.phoneNumber,
-                  email: data.email,
-                  date: new Date().toISOString(),
-                  amount: data.donationAmount,
-                  is_anonymous: data.isAnonymous,
-                }
-              }),
-            });
-
-            const strapiResult = await strapiResponse.json();
-            console.log('Strapi response:', strapiResult);
-
-            if (strapiResponse.ok) {
-              console.log('Transaction successful and data saved to Strapi!');
-              await fetch('/api/confirmationDonateMail', {
+        const script = document.createElement('script');
+        script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+        script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
+        script.onload = async () => {
+          setIsLoading(false);
+          console.log('Midtrans Token before pay:', midtransResult.token);
+          window.snap.pay(midtransResult.token, {
+            onSuccess: async function (result) {
+              console.log('Payment success:', result);
+              const strapiResponse = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/donations`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`,
+                },
                 body: JSON.stringify({
-                  email: data.email,
-                  fullName: nameToDisplay,
-                  donationAmount: data.donationAmount,
-                  date: new Date().toISOString(),
+                  data: {
+                    full_name: nameToDisplay,
+                    phone_number: data.phoneNumber,
+                    email: data.email,
+                    date: new Date().toISOString(),
+                    amount: data.donationAmount,
+                    is_anonymous: data.isAnonymous,
+                  }
                 }),
               });
-            } else {
-              console.error('Failed to save transaction data to Strapi:', strapiResult);
-              console.log('Transaction successful, but failed to save data to Strapi.');
+
+              const strapiResult = await strapiResponse.json();
+              console.log('Strapi response:', strapiResult);
+
+              if (strapiResponse.ok) {
+                console.log('Transaction successful and data saved to Strapi!');
+                await fetch('/api/confirmationDonateMail', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    email: data.email,
+                    fullName: nameToDisplay,
+                    donationAmount: data.donationAmount,
+                    date: new Date().toISOString(),
+                  }),
+                });
+              } else {
+                console.error('Failed to save transaction data to Strapi:', strapiResult);
+                console.log('Transaction successful, but failed to save data to Strapi.');
+              }
+            },
+            onPending: function (result) {
+              console.log("Waiting for your payment!", result);
+            },
+            onError: function (result) {
+              console.error("Payment failed!", result);
+            },
+            onClose: function () {
+              console.log("Payment modal closed!");
             }
-          },
-          onPending: function (result) {
-            console.log("Waiting for your payment!", result);
-          },
-          onError: function (result) {
-            console.error("Payment failed!", result);
-          },
-          onClose: function () {
-            console.log("Payment modal closed!");
-          }
-        });
-      };
-      document.body.appendChild(script);
-    } else {
-      console.error('Failed to create transaction with Midtrans:', midtransResult.error);
+          });
+        };
+        document.body.appendChild(script);
+      } else {
+        console.error('Failed to create transaction with Midtrans:', midtransResult.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      console.log('An error occurred while processing the transaction');
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Error:', error);
-    console.log('An error occurred while processing the transaction');
-  } finally {
-    setIsLoading(false);
-  }
-}, [token]);
+  }, [token]);
 
   const handleSelectAmount = useCallback((amount) => {
     setSelectedAmount(amount);
@@ -193,6 +194,14 @@ const DonationForm = React.memo(() => {
         </CardHeader>
 
         <CardContent>
+          <Alert className="mb-4" variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Warning</AlertTitle>
+            <AlertDescription>
+              This is a development environment. Do not perform any real transactions with actual banks or real money.
+            </AlertDescription>
+          </Alert>
+
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <FormField
