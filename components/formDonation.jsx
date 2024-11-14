@@ -181,13 +181,13 @@ const DonationForm = React.memo(() => {
 
   return (
     <motion.div
-      className="flex md:px-0 px-4 items-center justify-center min-h-screen"
+      className="flex md:px-0 my-20 px-4 items-center justify-center min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="w-full max-w-xl p-4 shadow-lg">
+      <Card className="w-full my-10 max-w-xl p-4 shadow-lg">
         <CardHeader>
           <CardTitle>Contribute Now</CardTitle>
           <CardDescription>Make a difference today</CardDescription>
