@@ -35,13 +35,27 @@ const Navbar = React.memo(() => {
   }, []);
 
   const handleScrollOrNavigate = React.useCallback(
-    (path) => {
-      const offset = 100; // Adjust offset as needed for your header height
-      const basePath = pathname.startsWith("/id") ? "/id" : "";
+  (path) => {
+    const offset = 100; // Adjust offset as needed for your header height
+    const basePath = pathname.startsWith("/id") ? "/id" : "";
 
-      if (path.startsWith("#")) {
-        // Smooth scroll for links on the landing page
-        if (pathname === "/" || pathname === "/id") {
+    if (path.startsWith("#")) {
+      // Smooth scroll for links on the landing page
+      if (pathname === "/" || pathname === "/id") {
+        const element = document.querySelector(path);
+        if (element) {
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+          const offsetPosition = elementPosition - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          });
+        }
+      } else {
+        // Navigate to home with language prefix first, then scroll with offset
+        router.push(`${basePath}/`);
+        setTimeout(() => {
           const element = document.querySelector(path);
           if (element) {
             const elementPosition = element.getBoundingClientRect().top + window.scrollY;
@@ -52,29 +66,16 @@ const Navbar = React.memo(() => {
               behavior: "smooth",
             });
           }
-        } else {
-          // Navigate to home with language prefix first, then scroll with offset
-          router.push(`${basePath}/`).then(() => {
-            const element = document.querySelector(path);
-            if (element) {
-              const elementPosition = element.getBoundingClientRect().top + window.scrollY;
-              const offsetPosition = elementPosition - offset;
-
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth",
-              });
-            }
-          });
-        }
-      } else {
-        // Navigate normally for other pages, including prefixed paths
-        router.push(`${basePath}${path}`);
+        }, 100); // Adjust the timeout duration as needed
       }
-      setIsOpen(false);
-    },
-    [router, pathname]
-  );
+    } else {
+      // Navigate normally for other pages, including prefixed paths
+      router.push(`${basePath}${path}`);
+    }
+    setIsOpen(false);
+  },
+  [router, pathname]
+);
 
   const handleDonateClick = React.useCallback(() => {
     router.push("/donate");
@@ -111,7 +112,8 @@ const Navbar = React.memo(() => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden gap-6 flex items-center">
+            <ToggleLanguage/>
             <button onClick={toggleMenu} className="text-black focus:outline-none">
               {isOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
             </button>
