@@ -25,7 +25,7 @@ const AboutUs = React.memo(() => {
     const { image_1, image_2, image_3, who_we_are, vision, mission } = data.data;
 
     return (
-        <section id="about" className="py-16 px-4 md:px-8 bg-gray-50 text-gray-900">
+        <section id="about" className="py-16 px-4 md:px-8 bg-background text-gray-900">
             <div className="container max-w-6xl mx-auto">
                 <motion.div
                     className="relative overflow-hidden rounded-lg shadow-lg mb-12"

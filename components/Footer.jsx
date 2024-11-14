@@ -4,15 +4,41 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
+import { useInView } from 'react-intersection-observer';
 
 export function Footer() {
     const { t } = useTranslation('footer');
+    const [ref, inView] = useInView({ triggerOnce: true });
+
+    const containerVariants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                staggerChildren: 0.3,
+                duration: 0.8,
+                ease: "easeInOut"
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0 }
+    };
 
     return (
-        <footer className="py-12 px-8 bg-black text-white mt-20">
+        <motion.footer
+            ref={ref}
+            className="py-12 px-8 bg-black text-white mt-20"
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            variants={containerVariants}
+        >
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* About Section */}
-                <div>
+                <motion.div variants={itemVariants}>
                     <h2 className="text-2xl font-bold mb-4">kalangsari
                     <span className="text-kalang">Pride</span>
                     </h2>
@@ -22,10 +48,10 @@ export function Footer() {
                     <Link href="/#about" passHref>
                         <span className="text-gray-400 hover:text-white underline">{t('learn_more')}</span>
                     </Link>
-                </div>
+                </motion.div>
 
                 {/* Navigation Links */}
-                <div>
+                <motion.div variants={itemVariants}>
                     <h2 className="text-2xl font-bold mb-4">{t('quick_links')}</h2>
                     <ul className="space-y-2">
                         <li>
@@ -49,10 +75,10 @@ export function Footer() {
                             </Link>
                         </li>
                     </ul>
-                </div>
+                </motion.div>
 
                 {/* Contact Information */}
-                <div>
+                <motion.div variants={itemVariants}>
                     <h2 className="text-2xl font-bold mb-4">{t('get_in_touch')}</h2>
                     <p className="text-gray-400">{t('have_questions')}</p>
                     <ul className="mt-4 space-y-2">
@@ -65,11 +91,14 @@ export function Footer() {
                             <span>{t('phone')}</span>
                         </li>
                     </ul>
-                </div>
+                </motion.div>
             </div>
 
             {/* Social Media & Donate */}
-            <div className="mt-12 border-t border-gray-700 pt-8">
+            <motion.div
+                className="mt-12 border-t border-gray-700 pt-8"
+                variants={itemVariants}
+            >
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     {/* Social Media Icons */}
                     <div className="flex space-x-4">
@@ -115,7 +144,7 @@ export function Footer() {
                 <div className="mt-8 text-center text-gray-400 text-sm">
                     &copy; {new Date().getFullYear()} kalangsariPride. {t('all_rights_reserved')}
                 </div>
-            </div>
-        </footer>
+            </motion.div>
+        </motion.footer>
     );
 }
