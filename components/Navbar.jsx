@@ -111,7 +111,8 @@ const Navbar = React.memo(() => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center">
+          <div className="md:hidden gap-6 flex items-center">
+            <ToggleLanguage/>
             <button onClick={toggleMenu} className="text-black focus:outline-none">
               {isOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
             </button>
