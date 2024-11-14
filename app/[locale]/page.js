@@ -16,7 +16,7 @@ export default async function Home({ params }) {
       namespaces={i18nNamespaces}
       locale={locale}
       resources={resources}>
-      <div className="my-20">
+      <div>
         <Hero />
         <AboutUs />
         <EventCarousel />
