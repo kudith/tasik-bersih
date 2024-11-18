@@ -1,10 +1,10 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { volunteerSchema } from "@/lib/formschema";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {useState, useEffect, useCallback} from "react";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {volunteerSchema} from "@/lib/formschema";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -38,15 +38,15 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
-import { LoadingModal } from "@/components/ui/LoadingModal";
+import {LoadingModal} from "@/components/ui/LoadingModal";
 import ThanksComponent from "@/components/ui/thanks";
-import { motion } from "framer-motion";
-import { VolunteerBenefits } from "@/components/VolunteerBenefits";
-import { useInView } from "react-intersection-observer";
-import { useTranslation } from "react-i18next";
-import { useCurrentLocale } from "next-i18n-router/client";
+import {motion} from "framer-motion";
+import {VolunteerBenefits} from "@/components/VolunteerBenefits";
+import {useInView} from "react-intersection-observer";
+import {useTranslation} from "react-i18next";
+import {useCurrentLocale} from "next-i18n-router/client";
 import i18nConfig from "@/i18nConfig";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 export function VolunteerForm() {
     const [events, setEvents] = useState([]);
@@ -55,7 +55,7 @@ export function VolunteerForm() {
     const [isThanksOpen, setIsThanksOpen] = useState(false);
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState(null);
-    const { t } = useTranslation();
+    const {t} = useTranslation();
     const locale = useCurrentLocale(i18nConfig);
     const form = useForm({
         resolver: zodResolver(volunteerSchema),
@@ -72,7 +72,13 @@ export function VolunteerForm() {
         mode: "onChange",
     });
 
-    const { handleSubmit, watch, setValue, formState: { errors, isValid }, reset } = form;
+    const {
+        handleSubmit,
+        watch,
+        setValue,
+        formState: {errors, isValid},
+        reset
+    } = form;
 
     const fetchEvents = useCallback(async () => {
         try {
@@ -130,7 +136,7 @@ export function VolunteerForm() {
                 const imageUrl = selectedEvent.image && selectedEvent.image.length > 0 ? selectedEvent.image[0].url : null;
                 await fetch('/api/sendConfirmationEmail', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
                         email: data.email,
                         fullName: data.fullName || data.groupName,
@@ -168,7 +174,7 @@ export function VolunteerForm() {
         window.location.reload(); // Reload the page
     }, []);
 
-    const { ref, inView } = useInView({
+    const {ref, inView} = useInView({
         triggerOnce: true,
         threshold: 0.1,
     });
@@ -184,105 +190,113 @@ export function VolunteerForm() {
              className="flex flex-col md:flex-row items-center justify-start max-w-7xl mx-auto md:px-0 px-4 overflow-hidden">
             <motion.div
                 ref={ref}
-                initial={{ opacity: 0, x: -50 }}
-                animate={inView ? { opacity: 1, x: 0 } : {}}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
+                initial={{opacity: 0, x: -50}}
+                animate={inView ? {opacity: 1, x: 0} : {}}
+                exit={{opacity: 0, x: -50}}
+                transition={{duration: 0.6, ease: "easeInOut"}}
                 className="w-full max-w-xl p-4"
             >
-                <Tabs defaultValue="individual" className="w-full" onValueChange={() => reset()}>
+                <Tabs defaultValue="individual" className="w-full"
+                      onValueChange={() => reset()}>
                     <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="individual">{t("individual")}</TabsTrigger>
-                        <TabsTrigger value="group">{t("group")}</TabsTrigger>
+                        <TabsTrigger value="individual"
+                                     className="data-[state=active]:bg-black data-[state=active]:text-white">
+                            {t("individual")}
+                        </TabsTrigger>
+                        <TabsTrigger value="group"
+                                     className="data-[state=active]:bg-black data-[state=active]:text-white">
+                            {t("group")}
+                        </TabsTrigger>
                     </TabsList>
                     <TabsContent value="individual">
                         <Card className="shadow-lg">
                             <CardHeader>
                                 <CardTitle>{t("individual_registration")}</CardTitle>
-                                <CardDescription>{t("fill_in_your_personal_information")}</CardDescription>
+                                <CardDescription>{t("join_us_and_make_a_difference")}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <Form {...form}>
-                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                    <form onSubmit={handleSubmit(onSubmit)}
+                                          className="space-y-4">
                                         <FormField
                                             control={form.control}
                                             name="fullName"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("full_name")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_full_name")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="address"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("address")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_address")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="phoneNumber"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("phone_number")}</FormLabel>
                                                     <FormControl>
                                                         <Input type="tel"
-                                                            placeholder={t("enter_phone_number")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                               placeholder={t("enter_phone_number")} {...field}
+                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="email"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("email")}</FormLabel>
                                                     <FormControl>
                                                         <Input type="email"
-                                                            placeholder={t("enter_email")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                               placeholder={t("enter_email")} {...field}
+                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="motivation"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("motivation")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_motivation")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="event"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("select_event")}</FormLabel>
                                                     <FormControl>
@@ -292,7 +306,7 @@ export function VolunteerForm() {
                                                             <SelectTrigger
                                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded">
                                                                 <SelectValue
-                                                                    placeholder={t("select_event")} />
+                                                                    placeholder={t("select_event")}/>
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {events.map((event) => (
@@ -305,17 +319,17 @@ export function VolunteerForm() {
                                                             </SelectContent>
                                                         </Select>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <AlertDialog open={isDialogOpen}
-                                            onOpenChange={setIsDialogOpen}>
+                                                     onOpenChange={setIsDialogOpen}>
                                             <AlertDialogTrigger asChild>
                                                 <Button type="button"
-                                                    className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                                    onClick={handleSubmit(handleSaveData)}
-                                                    >
+                                                        className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                        onClick={handleSubmit(handleSaveData)}
+                                                >
                                                     {t("register_now")}
                                                 </Button>
                                             </AlertDialogTrigger>
@@ -331,7 +345,7 @@ export function VolunteerForm() {
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
-                                        <LoadingModal isOpen={isLoading} />
+                                        <LoadingModal isOpen={isLoading}/>
                                     </form>
                                 </Form>
                             </CardContent>
@@ -341,105 +355,106 @@ export function VolunteerForm() {
                         <Card className="shadow-lg">
                             <CardHeader>
                                 <CardTitle>{t("group_registration")}</CardTitle>
-                                <CardDescription>{t("fill_in_your_group_information")}</CardDescription>
+                                <CardDescription>{t("join_us_and_make_a_difference")}</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <Form {...form}>
-                                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                    <form onSubmit={handleSubmit(onSubmit)}
+                                          className="space-y-4">
                                         <FormField
                                             control={form.control}
                                             name="groupName"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("group_name")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_group_name")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="groupSize"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("group_size")}</FormLabel>
                                                     <FormControl>
                                                         <Input type="number"
-                                                            placeholder={t("enter_group_size")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                               placeholder={t("enter_group_size")} {...field}
+                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="address"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("address")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_address")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="phoneNumber"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("phone_number")}</FormLabel>
                                                     <FormControl>
                                                         <Input type="tel"
-                                                            placeholder={t("enter_phone_number")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                               placeholder={t("enter_phone_number")} {...field}
+                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="email"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("email")}</FormLabel>
                                                     <FormControl>
                                                         <Input type="email"
-                                                            placeholder={t("enter_email")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                               placeholder={t("enter_email")} {...field}
+                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="motivation"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("motivation")}</FormLabel>
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_motivation")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded" />
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <FormField
                                             control={form.control}
                                             name="event"
-                                            render={({ field }) => (
+                                            render={({field}) => (
                                                 <FormItem>
                                                     <FormLabel>{t("select_event")}</FormLabel>
                                                     <FormControl>
@@ -449,7 +464,7 @@ export function VolunteerForm() {
                                                             <SelectTrigger
                                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded">
                                                                 <SelectValue
-                                                                    placeholder={t("select_event")} />
+                                                                    placeholder={t("select_event")}/>
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {events.map((event) => (
@@ -462,17 +477,17 @@ export function VolunteerForm() {
                                                             </SelectContent>
                                                         </Select>
                                                     </FormControl>
-                                                    <FormMessage />
+                                                    <FormMessage/>
                                                 </FormItem>
                                             )}
                                         />
                                         <AlertDialog open={isDialogOpen}
-                                            onOpenChange={setIsDialogOpen}>
+                                                     onOpenChange={setIsDialogOpen}>
                                             <AlertDialogTrigger asChild>
                                                 <Button type="button"
-                                                    className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                                    onClick={handleSubmit(handleSaveData)}
-                                                    >
+                                                        className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                        onClick={handleSubmit(handleSaveData)}
+                                                >
                                                     {t("register_now")}
                                                 </Button>
                                             </AlertDialogTrigger>
@@ -488,7 +503,7 @@ export function VolunteerForm() {
                                                 </AlertDialogFooter>
                                             </AlertDialogContent>
                                         </AlertDialog>
-                                        <LoadingModal isOpen={isLoading} />
+                                        <LoadingModal isOpen={isLoading}/>
                                     </form>
                                 </Form>
                             </CardContent>
@@ -496,8 +511,8 @@ export function VolunteerForm() {
                     </TabsContent>
                 </Tabs>
             </motion.div>
-            <VolunteerBenefits />
-            <ThanksComponent isOpen={isThanksOpen} onClose={handleCloseThanks} />
+            <VolunteerBenefits/>
+            <ThanksComponent isOpen={isThanksOpen} onClose={handleCloseThanks}/>
         </div>
     );
 }
