@@ -6,11 +6,15 @@ import * as React from "react";
 import { SkeletonAboutUs } from "@/components/skeleton/SkeletonAboutUs";
 import useSWR from "swr";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const fetcher = url => axios.get(url).then(res => res.data);
 
 const AboutUs = React.memo(() => {
-    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?populate=*`, fetcher);
+    const { i18n, t } = useTranslation();
+    const locale = i18n.language;
+
+    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?locale=${locale}&populate=*`, fetcher);
 
     const [ref1, inView1] = useInView({ triggerOnce: true });
     const [ref2, inView2] = useInView({ triggerOnce: true });
@@ -52,7 +56,7 @@ const AboutUs = React.memo(() => {
                     transition={{ duration: 1, delay: 0.3 }}
                     ref={ref2}
                 >
-                    <h2 className="text-5xl font-extrabold text-gray-800 mb-4">About Us</h2>
+                    <h2 className="text-5xl font-extrabold text-gray-800 mb-4">{t('about_us')}</h2>
                     <p className="text-xl text-gray-700 leading-relaxed">{who_we_are}</p>
                 </motion.div>
 
@@ -66,7 +70,7 @@ const AboutUs = React.memo(() => {
                         transition={{ duration: 1, delay: 0.7 }}
                         ref={ref3}
                     >
-                        <h3 className="text-4xl font-bold text-gray-800 mb-4">Our Mission</h3>
+                        <h3 className="text-4xl font-bold text-gray-800 mb-4">{t('mission')}</h3>
                         <p className="text-lg text-gray-700 leading-relaxed">{mission}</p>
                     </motion.div>
 
@@ -115,7 +119,7 @@ const AboutUs = React.memo(() => {
                         transition={{ duration: 1, delay: 0.5 }}
                         ref={ref6}
                     >
-                        <h3 className="text-4xl font-bold text-gray-800 mb-4">Our Vision</h3>
+                        <h3 className="text-4xl font-bold text-gray-800 mb-4">{t('vision')}</h3>
                         <p className="text-lg text-gray-700 leading-relaxed">{vision}</p>
                     </motion.div>
                 </div>
