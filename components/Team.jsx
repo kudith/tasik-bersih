@@ -1,5 +1,4 @@
 "use client";
-import { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
 import Image from "next/legacy/image";
@@ -36,7 +35,7 @@ const Team = () => {
             <div className="container mx-auto px-6">
                 <div className="text-center mb-12">
                     <h2 className="text-4xl font-semibold text-gray-800 mb-4">{t('headline')}</h2>
-                    <p className="text-lg text-gray-600 max-w-xl mx-auto">
+                    <p className="text-lg text-gray-600 max-w-6xl mx-auto">
                         {t('description')}
                     </p>
                 </div>

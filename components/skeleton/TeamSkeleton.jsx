@@ -14,9 +14,11 @@ const TeamSkeleton = ({ count }) => {
         <section id="team" className="py-16 min-h-screen">
             <div className="container mx-auto px-6">
                 {/* Headline */}
-                <div className="text-center mb-12">
+                <div className="text-center space-y-4 mb-12">
                     <Skeleton className="h-10 w-48 mx-auto mb-4" />
-                    <Skeleton className="h-6 w-96 mx-auto" />
+                    <Skeleton className="h-6 w-9/12 mx-auto" />
+                    <Skeleton className="h-6 w-8/12 mx-auto" />
+                    <Skeleton className="h-6 w-1/4 mx-auto" />
                 </div>
 
                 {/* Team Cards */}
