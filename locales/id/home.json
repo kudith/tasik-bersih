@@ -2,6 +2,10 @@
   "contribute_now": "Berkontribusi Sekarang",
   "learn_more": "Pelajari Lebih Lanjut",
 
+  "about_us": "Tentang Kami",
+  "mission": "Misi",
+  "vision": "Visi",
+
 
   "gain_valuable_experience": "Dapatkan Pengalaman Berharga",
   "gain_valuable_experience_text": "Terlibat dalam pekerjaan bermakna yang meningkatkan perjalanan profesional Anda dan memperkaya resume Anda.",
@@ -17,6 +21,8 @@
 
   "volunteer_registration": "Pendaftaran Relawan",
   "join_us_and_make_a_difference": "Bergabunglah dengan kami dan buat perbedaan",
+  "individual_registration": "Pendaftaran Individu",
+  "group_registration": "Pendaftaran Kelompok",
   "registration_type": "Jenis Pendaftaran",
   "individual": "Individu",
   "group": "Kelompok",
