@@ -42,9 +42,9 @@ const Gallery = () => {
   return (
     <div className="grid grid-cols-1 mx-auto max-w-7xl md:my-10 sm:grid-cols-2 md:grid-cols- gap-6 p-4">
       <div className="col-span-full space-y-6 my-20 mx-auto text-center mb-6">
-        <h2 className="text-4xl max-w-2xl mx-auto font-bold">Taking Action to Reduce Pollution and Protect Our Local Ecosystem.</h2>
+        <h2 className="text-4xl max-w-2xl mx-auto font-bold">{t('headline_galleries')}</h2>
         <p className="text-gray-600 max-w-5xl">
-          Discover the efforts of our community as we join hands to clean our environment. From riverbanks to narrow alleys, these moments reflect our dedication to creating a cleaner and healthier environment for everyone.
+          {t('headline_galleries_text')}
         </p>
       </div>
       {galleries.map((gallery) => (
@@ -87,7 +87,7 @@ const EmblaCarousel = ({ images }) => {
           {images.map((img, index) => (
             <div
               key={index}
-              className="relative flex-[0_0_100%] w-full h-[28rem] p-1"
+              className="relative flex-[0_0_100%] w-full h-[40rem] p-1"
             >
               <Image
                 src={img.url}

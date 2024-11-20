@@ -87,7 +87,7 @@ const EventItem = ({ event, index, onVolunteerClick }) => {
                                     <span>{formattedTime} - Selesai</span>
                                 </div>
                                 <Button
-                                    className="mt-4 px-4 py-2 text-white bg-primary hover:bg-teal-800 rounded-md"
+                                    className="mt-4 px-4 py-2 text-white bg-primary hover:bg-black rounded-md"
                                     onClick={() => onVolunteerClick(event.event_name)}
                                 >
                                     Volunteer Now

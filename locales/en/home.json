@@ -3,8 +3,13 @@
   "learn_more": "Learn More",
 
   "about_us": "About Us",
-  "mission": "Mission",
-  "vision": "Vision",
+  "mission": "Our Mission",
+  "vision": "Our Vision",
+
+  "report": "Report",
+
+  "headline_galleries": "Taking Action to Reduce Pollution and Protect Our Local Ecosystem.",
+  "headline_galleries_text": "Discover the efforts of our community as we join hands to clean our environment. From riverbanks to narrow alleys, these moments reflect our dedication to creating a cleaner and healthier environment for everyone.",
 
   "gain_valuable_experience": "Gain Valuable Experience",
   "gain_valuable_experience_text": "Engage in meaningful work that boosts your professional journey and enriches your resume.",
@@ -20,7 +25,7 @@
   "volunteer_registration": "Volunteer Registration",
   "join_us_and_make_a_difference": "Join us and make a difference",
   "individual_registration": "Individual Registration",
-    "group_registration": "Group Registration",
+  "group_registration": "Group Registration",
   "registration_type": "Registration Type",
   "individual": "Individual",
   "group": "Group",
