@@ -187,7 +187,7 @@ export function VolunteerForm() {
 
     return (
         <div id="volunteer"
-             className="flex flex-col md:flex-row items-center justify-start max-w-7xl mx-auto md:px-0 px-4 overflow-hidden">
+             className="flex flex-col md:flex-row items-start justify-start max-w-7xl mx-auto md:px-0 px-4 overflow-hidden">
             <motion.div
                 ref={ref}
                 initial={{opacity: 0, x: -50}}
