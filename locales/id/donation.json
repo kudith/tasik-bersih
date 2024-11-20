@@ -1,0 +1,22 @@
+{
+  "contribute_now": "Berkontribusi Sekarang",
+    "make_a_difference_today": "Buat perbedaan hari ini",
+  "learn_more": "Pelajari Lebih Lanjut",
+  "full_name": "Nama Lengkap",
+  "donate_as_anonymous": "Donasi sebagai Anonim",
+  "phone_number": "Nomor Telepon",
+  "email": "Email",
+  "custom_donation_amount": "Jumlah Donasi Kustom",
+  "enter_full_name": "Masukkan nama lengkap Anda",
+  "enter_phone_number": "Masukkan nomor telepon Anda",
+  "enter_email": "Masukkan alamat email Anda",
+  "enter_custom_amount": "Masukkan jumlah kustom (IDR)",
+  "donate_now": "Donasi Sekarang",
+  "confirm_donation": "Konfirmasi Donasi",
+  "confirm_donation_message": "Apakah Anda yakin ingin mengirimkan donasi ini?",
+  "cancel": "Batal",
+  "confirm": "Konfirmasi",
+  "warning": "Peringatan",
+  "warning_message": "Ini masih dalam lingkungan pengembangan, Jangan melakukan transaksi nyata dengan bank atau uang sungguhan.",
+  "please_wait": "Harap tunggu"
+}
