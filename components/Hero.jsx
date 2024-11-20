@@ -50,7 +50,7 @@ const Hero = () => {
     <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8">
       <Suspense>
         <motion.div
-          className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6"
+          className="container max-w-4xl mx-auto flex flex-col items-center text-center space-y-6"
           initial="hidden"
           animate="visible"
           variants={fadeIn}
@@ -63,7 +63,7 @@ const Hero = () => {
           </motion.h1>
 
           <motion.p
-            className="text-lg md:text-xl text-gray-60 leading-relaxed max-w-xl"
+            className="text-lg md:text-xl text-gray-60 leading-relaxed max-w-4xl"
             variants={slideUp}
           >
             {subtittle}

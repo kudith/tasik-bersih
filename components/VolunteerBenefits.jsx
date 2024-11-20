@@ -40,7 +40,7 @@ export function VolunteerBenefits() {
       initial={{ opacity: 0, x: 50 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ duration: 0.6, ease: "easeInOut" }}
-      className="w-full max-w-3xl p-8 overflow-hidden"
+      className="w-full max-w-3xl md:mt-7  p-8 overflow-hidden"
     >
       <Card className="shadow-xl rounded-lg overflow-hidden">
         <CardHeader>

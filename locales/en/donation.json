@@ -1,0 +1,22 @@
+{
+  "contribute_now": "Contribute Now",
+  "make_a_difference_today": "Make a difference today",
+  "learn_more": "Learn More",
+  "full_name": "Full Name",
+  "donate_as_anonymous": "Donate as Anonymous",
+  "phone_number": "Phone Number",
+  "email": "Email",
+  "custom_donation_amount": "Custom Donation Amount",
+  "enter_full_name": "Enter your full name",
+  "enter_phone_number": "Enter your phone number",
+  "enter_email": "Enter your email address",
+  "enter_custom_amount": "Enter a custom amount (IDR)",
+  "donate_now": "Donate Now",
+  "confirm_donation": "Confirm Donation",
+  "confirm_donation_message": "Are you sure you want to submit this donation?",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "warning": "Warning",
+  "warning_message": "This still in development environment. Do not make real transactions with bank or real money.",
+  "please_wait": "Please wait"
+}

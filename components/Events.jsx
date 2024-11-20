@@ -71,23 +71,23 @@ const EventItem = ({ event, index, onVolunteerClick }) => {
                     <CardContent className="p-1">
                         <div className="flex flex-col md:flex-row">
                             <div className="w-full md:w-1/2 space-y-4 mb-4 md:mb-0">
-                                <div className="flex items-center text-teal-700">
-                                    <CalendarIcon className="w-5 h-5 mr-2" />
-                                    <span className="text-lg font-semibold">{formattedDate}</span>
+                                <div className="flex items-center">
+                                    <CalendarIcon className="w-5 h-5 mr-2 text-primary" />
+                                    <span className="text-lg font-semibold text-primary">{formattedDate}</span>
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-800 mb-2">
+                                <h3 className="text-xl font-bold text-primary mb-2">
                                     {event.event_name}
                                 </h3>
-                                <div className="flex items-center text-gray-600">
+                                <div className="flex items-center text-primary">
                                     <MapPinIcon className="w-5 h-5 mr-2" />
                                     <span>{event.location}</span>
                                 </div>
-                                <div className="flex items-center text-gray-600">
+                                <div className="flex items-center text-primary">
                                     <ClockIcon className="w-5 h-5 mr-2" />
                                     <span>{formattedTime} - Selesai</span>
                                 </div>
                                 <Button
-                                    className="mt-4 px-4 py-2 text-white bg-teal-700 hover:bg-teal-800 rounded-md"
+                                    className="mt-4 px-4 py-2 text-white bg-primary hover:bg-black rounded-md"
                                     onClick={() => onVolunteerClick(event.event_name)}
                                 >
                                     Volunteer Now
@@ -116,7 +116,7 @@ const EventCarousel = React.memo(() => {
     const { i18n } = useTranslation();
     const locale = i18n.language;
     const plugin = React.useRef(
-        Autoplay({ delay: 3000, stopOnInteraction: true })
+        Autoplay({ delay: 3000, stopOnInteraction: false }) // Set stopOnInteraction to false
     );
 
     const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?locale=${locale}&populate=*`, fetcher);
@@ -128,18 +128,18 @@ const EventCarousel = React.memo(() => {
         [router]
     );
 
-    if (error) return <p className="text-center">{error}</p>;
+    if (error) return <p className="text-center text-primary">{error}</p>;
     if (!data) return <SkeletonEvent count={8} />;
 
     const events = data.data;
 
     if (!events.length)
-        return <p className="text-center">No events available.</p>;
+        return <p className="text-center text-primary">No events available.</p>;
 
     return (
         <div id="events" className="flex flex-col items-center justify-center my-20">
             <motion.h1
-                className="text-3xl font-bold mb-8 text-teal-700 text-center"
+                className="text-3xl font-bold mb-8 text-center text-primary"
                 initial="hidden"
                 animate="visible"
                 variants={headingVariants}
@@ -149,8 +149,6 @@ const EventCarousel = React.memo(() => {
             <Carousel
                 plugins={[plugin.current]}
                 className="w-full max-w-5xl mx-auto overflow-hidden p-6"
-                onMouseEnter={() => plugin.current.stop()}
-                onMouseLeave={() => plugin.current.reset()}
             >
                 <CarouselContent className="flex px-6">
                     {events.map((event, index) => (
@@ -163,12 +161,12 @@ const EventCarousel = React.memo(() => {
                     ))}
                 </CarouselContent>
                 <CarouselPrevious
-                    className="absolute top-1/2 left-2 -translate-y-1/2 bg-teal-700 text-white rounded-full p-2 shadow-md cursor-pointer hover:bg-teal-800 transition duration-300">
+                    className="absolute top-1/2 left-2 -translate-y-1/2 bg-primary text-white rounded-full p-2 shadow-md cursor-pointer hover:bg-black hover:text-white transition duration-300">
                     <span className="sr-only">Previous</span>
                     &#9664;
                 </CarouselPrevious>
                 <CarouselNext
-                    className="absolute top-1/2 right-2 -translate-y-1/2 bg-teal-700 text-white rounded-full p-2 shadow-md cursor-pointer hover:bg-teal-800 transition duration-300">
+                    className="absolute top-1/2 right-2 -translate-y-1/2 bg-primary text-white rounded-full p-2 shadow-md cursor-pointer hover:bg-black hover:text-white transition duration-300">
                     <span className="sr-only">Next</span>
                     &#9654;
                 </CarouselNext>
@@ -176,5 +174,4 @@ const EventCarousel = React.memo(() => {
         </div>
     );
 });
-
 export default EventCarousel;

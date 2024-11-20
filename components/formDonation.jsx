@@ -7,8 +7,9 @@ import { donationSchema } from "@/lib/formschema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, AlertCircle} from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import {
   Card,
   CardHeader,
@@ -39,6 +40,7 @@ import { LoadingModal } from "@/components/ui/LoadingModal";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const DonationForm = React.memo(() => {
+  const { t } = useTranslation();
   const [selectedAmount, setSelectedAmount] = useState(0);
   const [token, setToken] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,7 +65,6 @@ const DonationForm = React.memo(() => {
     const nameToDisplay = data.isAnonymous ? "Anonymous" : data.fullName;
 
     try {
-      // console.log('Submitting donation data:', data);
       const midtransResponse = await fetch('/api/transaction', {
         method: 'POST',
         headers: {
@@ -79,21 +80,17 @@ const DonationForm = React.memo(() => {
       });
 
       const midtransResult = await midtransResponse.json();
-      // console.log('Midtrans response:', midtransResult);
 
       if (midtransResponse.ok) {
         setToken(midtransResult.token);
-        // console.log('Midtrans Token:', midtransResult.token);
 
         const script = document.createElement('script');
         script.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
         script.setAttribute('data-client-key', process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY);
         script.onload = async () => {
           setIsLoading(false);
-          // console.log('Midtrans Token before pay:', midtransResult.token);
           window.snap.pay(midtransResult.token, {
             onSuccess: async function (result) {
-              // console.log('Payment success:', result);
               const strapiResponse = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/donations`, {
                 method: 'POST',
                 headers: {
@@ -113,10 +110,8 @@ const DonationForm = React.memo(() => {
               });
 
               const strapiResult = await strapiResponse.json();
-              // console.log('Strapi response:', strapiResult);
 
               if (strapiResponse.ok) {
-                // console.log('Transaction successful and data saved to Strapi!');
                 await fetch('/api/confirmationDonateMail', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -129,17 +124,16 @@ const DonationForm = React.memo(() => {
                 });
               } else {
                 console.error('Failed to save transaction data to Strapi:', strapiResult);
-                // console.log('Transaction successful, but failed to save data to Strapi.');
               }
             },
             onPending: function (result) {
-              // console.log("Waiting for your payment!", result);
+              console.log("Waiting for your payment!", result);
             },
             onError: function (result) {
               console.error("Payment failed!", result);
             },
             onClose: function () {
-              // console.log("Payment modal closed!");
+              console.log("Payment modal closed!");
             }
           });
         };
@@ -149,7 +143,6 @@ const DonationForm = React.memo(() => {
       }
     } catch (error) {
       console.error('Error:', error);
-      // console.log('An error occurred while processing the transaction');
     } finally {
       setIsLoading(false);
     }
@@ -189,16 +182,16 @@ const DonationForm = React.memo(() => {
     >
       <Card className="w-full my-10 max-w-xl p-4 shadow-lg">
         <CardHeader>
-          <CardTitle>Contribute Now</CardTitle>
-          <CardDescription>Make a difference today</CardDescription>
+          <CardTitle>{t("contribute_now")}</CardTitle>
+          <CardDescription>{t("make_a_difference_today")}</CardDescription>
         </CardHeader>
 
         <CardContent>
           <Alert className="mb-4" variant="destructive">
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Warning</AlertTitle>
+            <AlertTitle>{t("warning")}</AlertTitle>
             <AlertDescription>
-              This is a development environment. Do not perform any real transactions with actual banks or real money.
+              {t("warning_message")}
             </AlertDescription>
           </Alert>
 
@@ -209,10 +202,10 @@ const DonationForm = React.memo(() => {
                 name="fullName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>{t("full_name")}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter your full name"
+                        placeholder={t("enter_full_name")}
                         {...field}
                         disabled={form.watch('isAnonymous')}
                         className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
@@ -235,7 +228,7 @@ const DonationForm = React.memo(() => {
                       />
                     </FormControl>
                     <FormLabel htmlFor="anonymous" className="text-sm">
-                      Donate as Anonymous
+                      {t("donate_as_anonymous")}
                     </FormLabel>
                   </FormItem>
                 )}
@@ -246,11 +239,11 @@ const DonationForm = React.memo(() => {
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    <FormLabel>{t("phone_number")}</FormLabel>
                     <FormControl>
                       <Input
                         type="tel"
-                        placeholder="Enter your phone number"
+                        placeholder={t("enter_phone_number")}
                         {...field}
                         className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                       />
@@ -265,11 +258,11 @@ const DonationForm = React.memo(() => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("email")}</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="Enter your email address"
+                        placeholder={t("enter_email")}
                         {...field}
                         className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
                       />
@@ -299,11 +292,11 @@ const DonationForm = React.memo(() => {
                 name="donationAmount"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Custom Donation Amount</FormLabel>
+                    <FormLabel>{t("custom_donation_amount")}</FormLabel>
                     <FormControl>
                       <Input
                         type="text"
-                        placeholder="Enter a custom amount (IDR)"
+                        placeholder={t("enter_custom_amount")}
                         value={`IDR ${field.value.toLocaleString()}`}
                         onChange={handleInputChange}
                         className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
@@ -325,30 +318,30 @@ const DonationForm = React.memo(() => {
                     {isLoading ? (
                       <>
                         <Loader2 className="animate-spin mr-2" />
-                        Please wait
+                        {t("please_wait")}
                       </>
                     ) : (
-                      "Donate Now"
+                      t("donate_now")
                     )}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Confirm Donation</AlertDialogTitle>
+                    <AlertDialogTitle>{t("confirm_donation")}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Are you sure you want to submit this donation?
+                      {t("confirm_donation_message")}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                     <AlertDialogAction onClick={handleSubmit(handleConfirm)}>
                       {isLoading ? (
                         <Button disabled>
                           <Loader2 className="animate-spin" />
-                          Please wait
+                          {t("please_wait")}
                         </Button>
                       ) : (
-                        "Confirm"
+                        t("confirm")
                       )}
                     </AlertDialogAction>
                   </AlertDialogFooter>
