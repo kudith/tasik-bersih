@@ -4,6 +4,7 @@ import EventCarousel from "@/components/Events";
 import { VolunteerForm } from "@/components/VolunteerForm";
 import initTranslations from "../i18n";
 import TranslationsProvider from "@/components/TranslationsProvider";
+import Gallery from "@/components/Gallery";
 
 const i18nNamespaces = ['home'];
 
@@ -19,6 +20,7 @@ export default async function Home({ params }) {
       <div>
         <Hero />
         <AboutUs />
+        <Gallery/>
         <EventCarousel />
         <VolunteerForm />
       </div>
