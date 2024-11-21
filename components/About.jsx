@@ -43,6 +43,7 @@ const AboutUs = React.memo(() => {
                         alt="About Us Image 1"
                         width={700}
                         height={400}
+                        sizes={"(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"}
                         quality={100}
                         className="w-full h-96 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
                         loading="lazy"
