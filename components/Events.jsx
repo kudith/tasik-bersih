@@ -40,22 +40,24 @@ const eventItemVariants = {
     },
 };
 
+
 const EventItem = ({ event, index, onVolunteerClick }) => {
     const { ref, inView } = useInView({
         triggerOnce: true,
         threshold: 0.1,
     });
+    const { t } = useTranslation();
 
     const imageUrls = event.image.map(img => img.url);
     const imageUrl = imageUrls.length > 0 ? imageUrls[0] : '';
     const eventDate = new Date(event.date);
     const eventTime = new Date(Date.parse(event.date));
-    const formattedDate = eventDate.toLocaleDateString("en-US", {
+    const formattedDate = eventDate.toLocaleDateString("id-ID", {
         day: "2-digit",
         month: "long",
         year: "numeric",
     });
-    const formattedTime = eventTime.toLocaleTimeString(["en-US"], {
+    const formattedTime = eventTime.toLocaleTimeString("id-ID", {
         hour: "2-digit",
         minute: "2-digit",
     });
@@ -90,7 +92,7 @@ const EventItem = ({ event, index, onVolunteerClick }) => {
                                     className="mt-4 px-4 py-2 text-white bg-primary hover:bg-black rounded-md"
                                     onClick={() => onVolunteerClick(event.event_name)}
                                 >
-                                    Volunteer Now
+                                    {t('volunteer_now')}
                                 </Button>
                             </div>
                             <div className="w-full md:w-10/12 relative h-48 md:h-56 overflow-hidden rounded-lg">
@@ -113,7 +115,7 @@ const EventItem = ({ event, index, onVolunteerClick }) => {
 
 const EventCarousel = React.memo(() => {
     const router = useRouter();
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const locale = i18n.language;
     const plugin = React.useRef(
         Autoplay({ delay: 3000, stopOnInteraction: false }) // Set stopOnInteraction to false
@@ -144,7 +146,7 @@ const EventCarousel = React.memo(() => {
                 animate="visible"
                 variants={headingVariants}
             >
-                Upcoming Events
+                {t('upcoming_events')}
             </motion.h1>
             <Carousel
                 plugins={[plugin.current]}
