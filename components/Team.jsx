@@ -52,7 +52,7 @@ const Team = () => {
                             className="flex flex-col items-center justify-center space-y-4"
                             variants={fadeIn}
                         >
-                            <div className="w-48 h-48 relative overflow-hidden full shadow-lg">
+                            <div className="w-48 h-48 relative overflow-hidden rounded full shadow-lg">
                                 <Image
                                     src={image?.url}
                                     alt={name}
