@@ -6,22 +6,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   FaBars,
   FaTimes,
-  FaHome,
-  FaInfoCircle,
-  FaCalendarAlt,
 } from "react-icons/fa";
-import { RiTeamFill } from "react-icons/ri";
-import { MdVolunteerActivism } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import ToggleLanguage from "@/components/ToggleLanguage";
 import { useTranslation } from "react-i18next";
+import {FaHandsHelping} from "react-icons/fa";
 
 const navItems = [
-  { name: "home", path: "#home", icon: <FaHome /> },
-  { name: "about", path: "#about", icon: <FaInfoCircle /> },
-  { name: "events", path: "#events", icon: <FaCalendarAlt /> },
-  { name: "volunteer", path: "#volunteer", icon: <MdVolunteerActivism /> },
-  { name: "team", path: "/team", icon: <RiTeamFill /> },
+  { name: "home", path: "#home" },
+  { name: "about", path: "#about" },
+  { name: "events", path: "#events" },
+  { name: "volunteer", path: "#volunteer" },
+  { name: "team", path: "/team" },
 ];
 
 const Navbar = React.memo(() => {
@@ -103,12 +99,14 @@ const Navbar = React.memo(() => {
                 className="flex items-center space-x-1 text-black hover:text-gray-500 font-inknut cursor-pointer transition-colors duration-300"
                 onClick={() => handleScrollOrNavigate(item.path)}
               >
-                {item.icon}
                 <span>{t(item.name)}</span>
               </p>
             ))}
             <ToggleLanguage />
-            <Button onClick={handleDonateClick}>{t('contribute_now')}</Button>
+            <Button onClick={handleDonateClick}>
+              <FaHandsHelping className="mr-2" />
+              {t('contribute_now')}
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -142,13 +140,15 @@ const Navbar = React.memo(() => {
                     className="flex items-center py-2 px-4 text-sm text-black hover:bg-gray-100 font-inknut cursor-pointer transition-colors duration-300"
                     onClick={() => handleScrollOrNavigate(item.path)}
                   >
-                    {item.icon}
                     <span className="ml-2">{t(item.name)}</span>
                   </p>
                 </motion.div>
               ))}
               <div className="py-2 px-4">
-                <Button className="w-full" onClick={handleDonateClick}>{t('contribute_now')}</Button>
+                <Button className="w-full" onClick={handleDonateClick}>
+                  <FaHandsHelping className="mr-2" />
+                  {t('contribute_now')}
+                </Button>
               </div>
             </motion.div>
           )}
