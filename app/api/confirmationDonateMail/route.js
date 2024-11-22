@@ -20,7 +20,7 @@ export async function POST(req) {
         console.log("Attempting to send email to:", email);
 
         const response = await resend.emails.send({
-            from: 'kalangsariPride@resend.dev',
+            from: 'admin@kalangsaripride.social',
             to: email,
             subject: '🌟 Thank You for Your Donation to KalangsariPride!',
             text: `Hello ${fullName},\n\nThank you for your generous donation of IDR ${donationAmount.toLocaleString()}.\n\nWe are thrilled to have your support!\n\nDate: ${formattedDate}\n\nBest regards,\nThe KalangsariPride Team`,
