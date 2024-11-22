@@ -31,7 +31,7 @@ export async function POST(req) {
         console.log("Attempting to send email to:", email);
 
         const response = await resend.emails.send({
-            from: 'volunteer@resend.dev',
+            from: 'admin@kalangsaripride.social',
             to: email,
             subject: '🌟 Welcome to KalangsariPride! Your Volunteer Confirmation ✔',
             text: `Hello ${fullName},\n\nThank you for signing up to volunteer at: ${event}.\n\nWe are thrilled to have you join us!\n\nDate: ${formattedDate}\nTime: ${formattedTime}\nLocation: ${location}\n\nLooking forward to making a difference together!\n\nBest regards,\nThe KalangsariPride Team`,
