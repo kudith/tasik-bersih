@@ -7,6 +7,9 @@ import { motion } from "framer-motion";
 import { TbMessageReportFilled } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 
+// Import SkeletonReportAlert
+import { SkeletonReportAlert } from "@/components/skeleton/SkeletonReportAlert";
+
 const ReportAlert = () => {
   const { i18n, t } = useTranslation();
   const locale = i18n.language;
@@ -38,11 +41,7 @@ const ReportAlert = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-r from-primary/30 via-white to-primary/30">
-        <div className="text-primary animate-pulse text-xl">{t("loading")}</div>
-      </div>
-    );
+    return <SkeletonReportAlert />;
   }
 
   if (error) {
