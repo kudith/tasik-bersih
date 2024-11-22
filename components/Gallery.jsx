@@ -14,16 +14,17 @@ const fetcher = url => axios.get(url).then(res => res.data);
 
 const Gallery = () => {
   const { t, i18n } = useTranslation();
-  const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/galleries?populate=*`, fetcher);
+  const locale = i18n.language;
+  const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/galleries?locale=${locale}&populate=*`, fetcher);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString(i18n.language, options);
+    return date.toLocaleDateString(locale, options);
   };
 
   if (error) {
-    return <div>Error loading galleries</div>;
+    return <div>{t('error_loading_galleries')}</div>;
   }
 
   if (!data) {
@@ -35,9 +36,9 @@ const Gallery = () => {
   return (
     <motion.div
       className="grid grid-cols-1 mx-auto max-w-7xl md:my-10 sm:grid-cols-2 md:grid-cols- gap-6 p-4"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
     >
       <HeaderSection t={t} />
       {galleries.map((gallery) => (
@@ -54,22 +55,22 @@ const HeaderSection = ({ t }) => {
     <motion.div
       ref={ref}
       className="col-span-full space-y-6 my-20 mx-auto text-center mb-6"
-      initial={{ opacity: 0, y: -50 }}
-      animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, y: -50, scale: 0.8 }}
+      animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50, scale: inView ? 1 : 0.8 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
     >
       <motion.h2
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        initial={{ opacity: 0, y: -50, scale: 0.8 }}
+        animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50, scale: inView ? 1 : 0.8 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
         className="text-4xl max-w-2xl mx-auto font-bold"
       >
         {t('headline_galleries')}
       </motion.h2>
       <motion.p
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        initial={{ opacity: 0, y: -50, scale: 0.8 }}
+        animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -50, scale: inView ? 1 : 0.8 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
         className="text-gray-600 max-w-5xl"
       >
         {t('headline_galleries_text')}
@@ -84,17 +85,17 @@ const GalleryItem = ({ gallery, formatDate }) => {
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, y: 50, scale: 0.8 }}
+      animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : 50, scale: inView ? 1 : 0.8 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
       className="bg-white rounded-lg shadow-md my-5 overflow-hidden"
     >
       <EmblaCarousel images={gallery.image} />
       <motion.div
         className="p-4"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }}
       >
         <h3 className="text-lg font-semibold">{gallery.tittle}</h3>
         <p className="text-gray-500">
@@ -125,9 +126,9 @@ const EmblaCarousel = ({ images }) => {
   return (
     <motion.div
       className="relative overflow-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
     >
       <div className="embla__viewport" ref={emblaRef}>
         <div className="flex">
@@ -135,9 +136,9 @@ const EmblaCarousel = ({ images }) => {
             <motion.div
               key={index}
               className="relative flex-[0_0_100%] w-full h-[40rem] p-1"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: index * 0.1 }}
             >
               <Image
                 src={img.url}
