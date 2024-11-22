@@ -20,7 +20,7 @@ export default function ToggleLanguage() {
 
   // Set current locale based on URL path on initial load
   useEffect(() => {
-    const pathLocale = currentPathname.startsWith("/id") ? "id" : "en";
+    const pathLocale = currentPathname.startsWith("/en") ? "en" : "id";
     setCurrentLocale(pathLocale);
   }, [currentPathname]);
 
@@ -34,7 +34,7 @@ export default function ToggleLanguage() {
     // Update URL path based on the selected locale
     const newPath =
         newLocale === defaultLocale && !i18nConfig.prefixDefault
-            ? currentPathname.replace(/^\/(id)/, "") || "/" // remove locale prefix for default
+            ? currentPathname.replace(/^\/(id|en)/, "") || "/" // remove locale prefix for default
             : `/${newLocale}${currentPathname.replace(/^\/(id|en)/, "")}`;
 
     router.push(newPath);
@@ -42,7 +42,7 @@ export default function ToggleLanguage() {
   };
 
   return (
-    <Select  onValueChange={handleChange} value={currentLocale}>
+    <Select onValueChange={handleChange} value={currentLocale}>
       <SelectTrigger className="">
         <SelectValue placeholder="Select Language" />
       </SelectTrigger>
@@ -53,7 +53,7 @@ export default function ToggleLanguage() {
         </SelectItem>
         <SelectItem value="id">
           <ID title="Indonesia" className="inline-block mr-2 w-5 h-5" />
-          <span className="hidden sm:inline ">Indonesian</span>
+          <span className="hidden sm:inline">Indonesian</span>
         </SelectItem>
       </SelectContent>
     </Select>

@@ -1,6 +1,6 @@
 const i18nConfig = {
   locales: ["en", "id"],
-  defaultLocale: "en",
+  defaultLocale: "id",
   prefixDefault: false,
   serverSetCookie:"never",
 };
