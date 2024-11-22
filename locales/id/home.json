@@ -39,7 +39,7 @@
   "group": "Kelompok",
   "full_name": "Nama Lengkap",
   "group_name": "Nama Kelompok",
-  "group_size": "Ukuran Kelompok",
+  "group_size": "Jumlah Anggota",
   "address": "Alamat",
   "phone_number": "Nomor Telepon",
   "email": "Email",
@@ -56,7 +56,7 @@
   "enter_full_name": "Masukkan Nama Lengkap",
   "enter_email": "Masukkan Email",
   "enter_group_name": "Masukkan Nama Kelompok",
-  "enter_group_size": "Masukkan Ukuran Kelompok",
+  "enter_group_size": "Masukkan Jumlah Anggota",
   "enter_motivation": "Masukkan Motivasi",
   "enter_event": "Masukkan Acara"
 }
