@@ -67,6 +67,10 @@ export function ReportPolluted() {
   const { handleSubmit, formState: { errors, isValid } } = form;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     // Simulate data fetching
     setTimeout(() => {
       setIsLoading(false);
@@ -199,7 +203,7 @@ export function ReportPolluted() {
   }
 
   return (
-    <div id="report-polluted" className="flex flex-col items-center justify-start max-w-7xl mx-auto px-4 overflow-hidden">
+    <div id="report-polluted" className="flex flex-col items-center justify-start max-w-7xl mx-auto px-4 min-h-screen overflow-hidden">
       <div className="flex flex-col md:gap-32 items-center md:flex-row w-full">
         <div className="md:w-1/2 p-4">
           <h2 className="text-3xl font-bold mb-4">{t("report_polluted")}</h2>
