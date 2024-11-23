@@ -13,7 +13,7 @@ export default async function ReportPage({ params }) {
       namespaces={i18nNamespaces}
       locale={locale}
       resources={resources}>
-      <div className="my-20">
+      <div className="my-20 min-h-screen">
         <ReportPolluted />
       </div>
     </TranslationsProvider>

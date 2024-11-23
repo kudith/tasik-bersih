@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 function formatDate(date) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(date).toLocaleDateString('en-US', options);
+    return new Date(date).toLocaleDateString('id-ID', options);
 }
 
 function formatTime(time) {
@@ -15,68 +15,68 @@ function formatTime(time) {
     date.setSeconds(0);
 
     const options = { hour: '2-digit', minute: '2-digit', hour12: true };
-    return date.toLocaleTimeString('en-US', options);
+    return date.toLocaleTimeString('id-ID', options);
 }
 
 export async function POST(req) {
-    console.log("Received request to send confirmation email");
+    console.log("Menerima permintaan untuk mengirim email konfirmasi");
 
     try {
         const { email, fullName, event, date, time, location, imageUrl } = await req.json();
-        console.log("Parsed request body:", { email, fullName, event, date, time, location, imageUrl });
+        console.log("Body permintaan yang diuraikan:", { email, fullName, event, date, time, location, imageUrl });
 
         const formattedDate = formatDate(date);
         const formattedTime = formatTime(time);
 
-        console.log("Attempting to send email to:", email);
+        console.log("Mencoba mengirim email ke:", email);
 
         const response = await resend.emails.send({
             from: 'admin@kalangsaripride.social',
             to: email,
-            subject: '🌟 Welcome to KalangsariPride! Your Volunteer Confirmation ✔',
-            text: `Hello ${fullName},\n\nThank you for signing up to volunteer at: ${event}.\n\nWe are thrilled to have you join us!\n\nDate: ${formattedDate}\nTime: ${formattedTime}\nLocation: ${location}\n\nLooking forward to making a difference together!\n\nBest regards,\nThe KalangsariPride Team`,
+            subject: '🌟 Selamat Datang di KalangsariPride! Konfirmasi Relawan Anda ✔',
+            text: `Halo ${fullName},\n\nTerima kasih telah mendaftar untuk menjadi relawan di: ${event}.\n\nKami sangat senang Anda bergabung dengan kami!\n\nTanggal: ${formattedDate}\nWaktu: ${formattedTime}\nLokasi: ${location}\n\nKami berharap dapat membuat perbedaan bersama!\n\nSalam hangat,\nTim KalangsariPride`,
             html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; color: #333;">
                     <header style="text-align: center; padding-bottom: 20px;">
-                        <h1 style="margin: 0; font-size: 24px;">KalangsariPride Community</h1>
-                        <p style="font-size: 14px; color: #333; margin-top: 5px;">Empowering Change, Together</p>
+                        <h1 style="margin: 0; font-size: 24px;">Komunitas KalangsariPride</h1>
+                        <p style="font-size: 14px; color: #333; margin-top: 5px;">Memberdayakan Perubahan, Bersama</p>
                     </header>
                     
                     <main style="padding: 20px 0; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd;">
                         <div style="text-align: center;">
-                            <img src="${imageUrl}" alt="Event Image" style="max-width: 100%; height: auto; margin-bottom: 20px;"/>
+                            <img src="${imageUrl}" alt="Gambar Acara" style="max-width: 100%; height: auto; margin-bottom: 20px;"/>
                         </div>
-                        <h2 style="font-size: 20px; color: #333;">Hello ${fullName},</h2>
-                        <p>We’re excited to welcome you to our community of change-makers! Thank you for signing up to volunteer at the <strong>${event}</strong> event. Your participation means a lot to us, and we can’t wait to work alongside you.</p>
+                        <h2 style="font-size: 20px; color: #333;">Halo ${fullName},</h2>
+                        <p>Kami sangat senang menyambut Anda ke komunitas pembuat perubahan kami! Terima kasih telah mendaftar untuk menjadi relawan di acara <strong>${event}</strong>. Partisipasi Anda sangat berarti bagi kami, dan kami tidak sabar untuk bekerja bersama Anda.</p>
                         <p>
-                            <strong>Event Details:</strong><br>
-                            Date: ${formattedDate}<br>
-                            Time: ${formattedTime}<br>
-                            Location: ${location}
+                            <strong>Detail Acara:</strong><br>
+                            Tanggal: ${formattedDate}<br>
+                            Waktu: ${formattedTime}<br>
+                            Lokasi: ${location}
                         </p>
-                        <p>Your support helps us make a meaningful impact. Together, we’re not just volunteering – we’re making a difference, building a brighter future for everyone in Kalangsari.</p>
-                        <p>See you soon, and thank you for your incredible dedication!</p>
+                        <p>Dukungan Anda membantu kami membuat dampak yang berarti. Bersama-sama, kita tidak hanya menjadi relawan – kita membuat perbedaan, membangun masa depan yang lebih cerah untuk semua orang di Kalangsari.</p>
+                        <p>Sampai jumpa, dan terima kasih atas dedikasi Anda yang luar biasa!</p>
                     </main>
 
                     <footer style="margin-top: 30px; text-align: center; padding-top: 10px; color: #777; font-size: 12px;">
-                        <p>Stay connected with KalangsariPride</p>
-                        <p>© ${new Date().getFullYear()} KalangsariPride Community | All Rights Reserved</p>
+                        <p>Tetap terhubung dengan KalangsariPride</p>
+                        <p>© ${new Date().getFullYear()} Komunitas KalangsariPride | Semua Hak Dilindungi</p>
                     </footer>
                 </div>
             `
         });
 
-        console.log("Message sent successfully:", response.id);
+        console.log("Pesan berhasil dikirim:", response.id);
 
         return new Response(
-            JSON.stringify({ message: 'Volunteer confirmation email sent successfully', messageId: response.id }),
+            JSON.stringify({ message: 'Email konfirmasi relawan berhasil dikirim', messageId: response.id }),
             { status: 200, headers: { "Content-Type": "application/json" } }
         );
     } catch (error) {
-        console.error('Error sending email:', error);
+        console.error('Kesalahan mengirim email:', error);
 
         return new Response(
-            JSON.stringify({ message: 'Error sending email', error: error.message }),
+            JSON.stringify({ message: 'Kesalahan mengirim email', error: error.message }),
             { status: 500, headers: { "Content-Type": "application/json" } }
         );
     }

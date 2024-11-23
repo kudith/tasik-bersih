@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function SkeletonReportPolluted() {
   return (
-    <div id="report-polluted" className="flex flex-col items-center justify-start max-w-7xl mx-auto px-4 overflow-hidden">
+    <div id="report-polluted" className="flex flex-col items-center justify-start max-w-7xl mx-auto px-4 min-h-screen overflow-hidden">
       <div className="flex flex-col md:gap-32 items-center md:flex-row w-full">
         <div className="md:w-1/2 p-4">
           <Skeleton className="h-8 w-3/4 mb-4" />

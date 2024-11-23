@@ -18,5 +18,25 @@
   "confirm": "Confirm",
   "warning": "Warning",
   "warning_message": "This still in development environment. Do not make real transactions with bank or real money.",
-  "please_wait": "Please wait"
+  "please_wait": "Please wait",
+
+
+    "contactUs": "Contact Us",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "sendMessage": "Send Message",
+    "sending": "Sending...",
+    "messageSent": "Message sent!",
+    "thankYou": "Thank You!",
+    "receivedMessage": "We've received your message and will get back to you soon.",
+    "sendAnotherMessage": "Send Another Message",
+    "error": "Error",
+    "failedToSend": "Failed to send message. Please try again later.",
+
+
+    "nameValidation": "Name must be at least {{min}} characters.",
+    "emailValidation": "Please enter a valid email address.",
+    "messageValidation": "Message must be at least {{min}} characters."
+
 }

@@ -18,5 +18,25 @@
   "confirm": "Konfirmasi",
   "warning": "Peringatan",
   "warning_message": "Ini masih dalam lingkungan pengembangan, Jangan melakukan transaksi nyata dengan bank atau uang sungguhan.",
-  "please_wait": "Harap tunggu"
+  "please_wait": "Harap tunggu",
+
+
+    "contactUs": "Hubungi Kami",
+    "name": "Nama",
+    "email": "Email",
+    "message": "Pesan",
+    "sendMessage": "Kirim Pesan",
+    "sending": "Mengirim...",
+    "messageSent": "Pesan terkirim!",
+    "thankYou": "Terima Kasih!",
+    "receivedMessage": "Kami telah menerima pesan Anda dan akan segera menghubungi Anda.",
+    "sendAnotherMessage": "Kirim Pesan Lain",
+    "error": "Kesalahan",
+    "failedToSend": "Gagal mengirim pesan. Silakan coba lagi nanti.",
+
+
+    "nameValidation": "Nama minimal harus {{min}} karakter.",
+    "emailValidation": "Silakan masukkan alamat email yang valid.",
+    "messageValidation": "Pesan minimal harus {{min}} karakter."
+
 }
