@@ -47,6 +47,8 @@ import {useTranslation} from "react-i18next";
 import {useCurrentLocale} from "next-i18n-router/client";
 import i18nConfig from "@/i18nConfig";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Send} from "lucide-react";
+
 
 export function VolunteerForm() {
     const [events, setEvents] = useState([]);
@@ -330,6 +332,8 @@ export function VolunteerForm() {
                                                         className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                                         onClick={handleSubmit(handleSaveData)}
                                                 >
+                                                    <Send
+                                                        className="mr-2 h-4 w-4"/>
                                                     {t("register_now")}
                                                 </Button>
                                             </AlertDialogTrigger>
@@ -488,6 +492,8 @@ export function VolunteerForm() {
                                                         className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                                                         onClick={handleSubmit(handleSaveData)}
                                                 >
+
+                                                    <Send className="mr-2 h-4 w-4" />
                                                     {t("register_now")}
                                                 </Button>
                                             </AlertDialogTrigger>
