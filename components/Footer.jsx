@@ -45,7 +45,7 @@ export function Footer() {
                     <p className="text-gray-400 mb-4">
                         {t('about_us')}
                     </p>
-                    <Link href="/#about" passHref>
+                    <Link href="/about" passHref>
                         <span className="text-gray-400 hover:text-white underline">{t('learn_more')}</span>
                     </Link>
                 </motion.div>
@@ -65,11 +65,6 @@ export function Footer() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/blog" passHref>
-                                <span className="hover:underline hover:text-white">{t('our_blog')}</span>
-                            </Link>
-                        </li>
-                        <li>
                             <Link href="/contact" passHref>
                                 <span className="hover:underline hover:text-white">{t('contact_us')}</span>
                             </Link>
@@ -84,7 +79,7 @@ export function Footer() {
                     <ul className="mt-4 space-y-2">
                         <li className="flex items-center space-x-2">
                             <FaEnvelope className="text-lg" />
-                            <span>{t('email')}</span>
+                            <a href="mailto:admin@kalangsaripride.social" className="hover:underline">{t('email')}</a>
                         </li>
                         <li className="flex items-center space-x-2">
                             <FaPhone className="text-lg" />
@@ -125,11 +120,7 @@ export function Footer() {
                     </div>
 
                     {/* Donate Button */}
-                    <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="mt-4 md:mt-0"
-                    >
+                    <motion.div className="mt-4 md:mt-0">
                         <Link href="/donate" passHref>
                             <span>
                                 <Button className="bg-secondary text-primary py-6 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-300 transition-colors duration-300">
