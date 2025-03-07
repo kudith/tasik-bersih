@@ -3,16 +3,12 @@ import nodemailer from 'nodemailer';
 
 // Konfigurasi nodemailer untuk Titan Email
 const transporter = nodemailer.createTransport({
-    host: 'smtp.titan.email', // Host SMTP Titan Email
-    port: 465, // Gunakan port 465 untuk SSL
-    secure: true, // true untuk SSL
+    host: 'smtp.ethereal.email',
+    port: 587,
     auth: {
-        user: process.env.EMAIL_USER, // Email Titan dari variabel lingkungan
-        pass: process.env.EMAIL_PASS, // Password Titan dari variabel lingkungan
-    },
-    tls: {
-        rejectUnauthorized: false, // Nonaktifkan verifikasi sertifikat TLS (opsional, bisa dihapus jika tidak diperlukan)
-    },
+        user: 'curtis.doyle20@ethereal.email',
+        pass: 'EQtwx4M5smwaEdWRcv'
+    }
 });
 
 // Fungsi POST untuk mengirim email
@@ -41,13 +37,13 @@ export async function POST(req) {
         // Informasi untuk debugging
         console.log('Preparing to send email:', { from, to, subject, text });
 
-        // Kirim email menggunakan nodemailer
+        // Kirim email menggunakan nodemailer (FORMAT HTML)
         const info = await transporter.sendMail({
             from: process.env.EMAIL_USER, // Gunakan email yang terautentikasi
             replyTo: from, // Gunakan email pengirim yang diinput oleh pengguna sebagai reply-to
             to, // Email penerima
             subject, // Subjek email
-            text, // Isi email
+            html: text, // <== Ubah dari "text" ke "html"
         });
 
         // Log detail pengiriman

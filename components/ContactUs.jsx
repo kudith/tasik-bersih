@@ -39,12 +39,12 @@ const ContactForm = () => {
             // Injection vulnerability: Directly concatenate user input into the command
             const response = await fetch(`/api/emails?name=${values.name}&email=${values.email}&message=${values.message}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                // headers: {
+                //     'Content-Type': 'application/json',
+                // },
                 body: JSON.stringify({
                     from: `${values.name} <${values.email}>`,
-                    to: 'admin@kalangsaripride.social',
+                    to: 'curtis.doyle20@ethereal.email',
                     subject: `New message from ${values.name}`,
                     text: values.message,
                 }),
