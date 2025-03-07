@@ -1,8 +1,6 @@
 "use client";
 import {useState, useEffect, useCallback} from "react";
 import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {volunteerSchema} from "@/lib/formschema";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {
@@ -17,7 +15,7 @@ import {
     CardHeader,
     CardContent,
     CardTitle,
-    CardDescription
+    CardDescription,
 } from "@/components/ui/card";
 import {
     Form,
@@ -25,7 +23,7 @@ import {
     FormField,
     FormItem,
     FormLabel,
-    FormMessage
+    FormMessage,
 } from "@/components/ui/form";
 import {
     AlertDialog,
@@ -36,7 +34,7 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger
+    AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {LoadingModal} from "@/components/ui/LoadingModal";
 import ThanksComponent from "@/components/ui/thanks";
@@ -49,18 +47,15 @@ import i18nConfig from "@/i18nConfig";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Send} from "lucide-react";
 
-
 export function VolunteerForm() {
     const [events, setEvents] = useState([]);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isThanksOpen, setIsThanksOpen] = useState(false);
-    const [error, setError] = useState(null);
     const [formData, setFormData] = useState(null);
     const {t} = useTranslation();
     const locale = useCurrentLocale(i18nConfig);
     const form = useForm({
-        resolver: zodResolver(volunteerSchema),
         defaultValues: {
             fullName: "",
             groupName: "",
@@ -74,24 +69,15 @@ export function VolunteerForm() {
         mode: "onChange",
     });
 
-    const {
-        handleSubmit,
-        watch,
-        setValue,
-        formState: {errors, isValid},
-        reset
-    } = form;
+    const {handleSubmit, setValue, formState: {isValid}, reset} = form;
 
     const fetchEvents = useCallback(async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/events?locale=${locale}&populate=*`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch events');
-            }
             const data = await response.json();
             setEvents(data.data);
         } catch (error) {
-            setError(error.message);
+            console.error("Error fetching events:", error);
         }
     }, [locale]);
 
@@ -100,15 +86,9 @@ export function VolunteerForm() {
     }, [fetchEvents]);
 
     const onSubmit = useCallback(async (data) => {
-        setIsLoading(true); // Show the loading dialog
+        setIsLoading(true);
 
         try {
-            const selectedEvent = events.find(event => event.event_name === data.event);
-            if (!selectedEvent) {
-                alert("Selected event not found.");
-                return;
-            }
-
             const payload = {
                 data: {
                     registrationType: data.groupName ? "group" : "individual",
@@ -127,29 +107,12 @@ export function VolunteerForm() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN}`,
                 },
                 body: JSON.stringify(payload),
             });
 
-            const responseData = await response.json();
-
             if (response.ok) {
-                const imageUrl = selectedEvent.image && selectedEvent.image.length > 0 ? selectedEvent.image[0].url : null;
-                await fetch('/api/sendConfirmationEmail', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        email: data.email,
-                        fullName: data.fullName || data.groupName,
-                        event: data.event,
-                        date: selectedEvent.date,
-                        time: selectedEvent.time,
-                        location: selectedEvent.location,
-                        imageUrl: imageUrl,
-                    }),
-                });
-                setIsThanksOpen(true); // Show the thanks modal
+                setIsThanksOpen(true);
             } else {
                 alert('Failed to register volunteer. Check console for details.');
             }
@@ -157,23 +120,23 @@ export function VolunteerForm() {
             console.error('Error in onSubmit function:', error);
             alert('An error occurred while registering the volunteer.');
         } finally {
-            setIsLoading(false); // Hide the loading dialog
+            setIsLoading(false);
         }
-    }, [events]);
+    }, []);
 
     const handleConfirm = useCallback(async () => {
-        setIsDialogOpen(false); // Close the confirmation dialog
-        if (formData) await onSubmit(formData); // Submit the stored formData
+        setIsDialogOpen(false);
+        if (formData) await onSubmit(formData);
     }, [formData, onSubmit]);
 
     const handleSaveData = useCallback((data) => {
-        setFormData(data); // Store data temporarily
-        setIsDialogOpen(true); // Open the confirmation dialog
+        setFormData(data);
+        setIsDialogOpen(true);
     }, []);
 
     const handleCloseThanks = useCallback(() => {
         setIsThanksOpen(false);
-        window.location.reload(); // Reload the page
+        window.location.reload();
     }, []);
 
     const {ref, inView} = useInView({
@@ -184,8 +147,6 @@ export function VolunteerForm() {
     useEffect(() => {
         reset();
     }, [reset]);
-
-    if (error) return <p>Error loading events: {error}</p>;
 
     return (
         <div id="volunteer"
@@ -229,7 +190,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_full_name")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -244,7 +206,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_address")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -257,9 +220,11 @@ export function VolunteerForm() {
                                                 <FormItem>
                                                     <FormLabel>{t("phone_number")}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="tel"
-                                                               placeholder={t("enter_phone_number")} {...field}
-                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                        <Input
+                                                            type="tel"
+                                                            placeholder={t("enter_phone_number")} {...field}
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -272,9 +237,11 @@ export function VolunteerForm() {
                                                 <FormItem>
                                                     <FormLabel>{t("email")}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="email"
-                                                               placeholder={t("enter_email")} {...field}
-                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                        <Input
+                                                            type="email"
+                                                            placeholder={t("enter_email")} {...field}
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -289,7 +256,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_motivation")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -304,7 +272,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Select
                                                             onValueChange={field.onChange}
-                                                            value={field.value}>
+                                                            value={field.value}
+                                                        >
                                                             <SelectTrigger
                                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded">
                                                                 <SelectValue
@@ -328,9 +297,10 @@ export function VolunteerForm() {
                                         <AlertDialog open={isDialogOpen}
                                                      onOpenChange={setIsDialogOpen}>
                                             <AlertDialogTrigger asChild>
-                                                <Button type="button"
-                                                        className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                                        onClick={handleSubmit(handleSaveData)}
+                                                <Button
+                                                    type="button"
+                                                    className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                    onClick={handleSubmit(handleSaveData)}
                                                 >
                                                     <Send
                                                         className="mr-2 h-4 w-4"/>
@@ -374,7 +344,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_group_name")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -387,9 +358,11 @@ export function VolunteerForm() {
                                                 <FormItem>
                                                     <FormLabel>{t("group_size")}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="number"
-                                                               placeholder={t("enter_group_size")} {...field}
-                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                        <Input
+                                                            type="number"
+                                                            placeholder={t("enter_group_size")} {...field}
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -404,7 +377,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_address")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -417,9 +391,11 @@ export function VolunteerForm() {
                                                 <FormItem>
                                                     <FormLabel>{t("phone_number")}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="tel"
-                                                               placeholder={t("enter_phone_number")} {...field}
-                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                        <Input
+                                                            type="tel"
+                                                            placeholder={t("enter_phone_number")} {...field}
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -432,9 +408,11 @@ export function VolunteerForm() {
                                                 <FormItem>
                                                     <FormLabel>{t("email")}</FormLabel>
                                                     <FormControl>
-                                                        <Input type="email"
-                                                               placeholder={t("enter_email")} {...field}
-                                                               className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                        <Input
+                                                            type="email"
+                                                            placeholder={t("enter_email")} {...field}
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -449,7 +427,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Input
                                                             placeholder={t("enter_motivation")} {...field}
-                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"/>
+                                                            className="w-full bg-gray-100 p-2 border border-gray-300 rounded"
+                                                        />
                                                     </FormControl>
                                                     <FormMessage/>
                                                 </FormItem>
@@ -464,7 +443,8 @@ export function VolunteerForm() {
                                                     <FormControl>
                                                         <Select
                                                             onValueChange={field.onChange}
-                                                            value={field.value}>
+                                                            value={field.value}
+                                                        >
                                                             <SelectTrigger
                                                                 className="w-full bg-gray-100 p-2 border border-gray-300 rounded">
                                                                 <SelectValue
@@ -488,12 +468,13 @@ export function VolunteerForm() {
                                         <AlertDialog open={isDialogOpen}
                                                      onOpenChange={setIsDialogOpen}>
                                             <AlertDialogTrigger asChild>
-                                                <Button type="button"
-                                                        className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                                        onClick={handleSubmit(handleSaveData)}
+                                                <Button
+                                                    type="button"
+                                                    className={`w-full ${!isValid ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                    onClick={handleSubmit(handleSaveData)}
                                                 >
-
-                                                    <Send className="mr-2 h-4 w-4" />
+                                                    <Send
+                                                        className="mr-2 h-4 w-4"/>
                                                     {t("register_now")}
                                                 </Button>
                                             </AlertDialogTrigger>
