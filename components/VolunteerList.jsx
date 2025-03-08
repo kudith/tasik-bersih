@@ -16,33 +16,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-// ⚠️ WARNING: EDUCATIONAL PURPOSE ONLY ⚠️
-// This code is intentionally vulnerable to XSS attacks for educational purposes.
-// NEVER use this approach in production applications!
-
-// Add Axios interceptors for logging
-axios.interceptors.request.use(
-  (request) => {
-    console.log("Starting Request", request)
-    return request
-  },
-  (error) => {
-    console.error("Request Error", error)
-    return Promise.reject(error)
-  },
-)
-
-axios.interceptors.response.use(
-  (response) => {
-    console.log("Response:", response)
-    return response
-  },
-  (error) => {
-    console.error("Response Error", error)
-    return Promise.reject(error)
-  },
-)
-
 const fetcher = (url) =>
   axios
     .get(url, {
@@ -55,7 +28,6 @@ const fetcher = (url) =>
 // Get initials from name
 const getInitials = (name) => {
   if (!name) return "VL"
-  // ⚠️ XSS VULNERABILITY: Directly using regex without proper sanitization
   const cleanName = name.replace(/<\/?[^>]+(>|$)/g, "")
   return cleanName
     .split(" ")
@@ -91,8 +63,7 @@ const eventToColor = (event) => {
   return eventColors[event] || "bg-gray-100 text-gray-800 border-gray-200"
 }
 
-// ⚠️ XSS VULNERABILITY: This function directly renders HTML without sanitization
-// Example attack: <img src="x" onerror="alert('XSS Attack!')" />
+
 const createMarkup = (html) => {
   return { __html: html || "" }
 }
@@ -104,26 +75,12 @@ const VolunteerList = () => {
   const [viewMode, setViewMode] = useState("grid")
   const [uniqueEvents, setUniqueEvents] = useState([])
 
-  // Refs for direct DOM manipulation to ensure XSS execution
+ 
   const nameRefs = useRef({})
   const bioRefs = useRef({})
   const addressRefs = useRef({})
 
-  // ⚠️ XSS VULNERABILITY: Directly executing JavaScript from URL parameters
-  // Example attack: ?xss=document.cookie
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const xssParam = params.get("xss")
-    if (xssParam) {
-      try {
-        // ⚠️ EXTREMELY DANGEROUS: Never do this in real applications!
-        // eslint-disable-next-line no-eval
-        eval(xssParam)
-      } catch (e) {
-        console.error("Error executing parameter:", e)
-      }
-    }
-  }, [])
+
 
   const { data, error, isLoading } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/volunteers`, fetcher)
 
@@ -143,35 +100,30 @@ const VolunteerList = () => {
   // Filter volunteers based on search term and selected event
   const filteredVolunteers = data?.data?.filter((volunteer) => {
     const name = volunteer.fullName || volunteer.groupName || ""
-    // ⚠️ XSS VULNERABILITY: Simple regex is not sufficient for HTML sanitization
     const cleanName = name.replace(/<\/?[^>]+(>|$)/g, "")
     const nameMatch = cleanName.toLowerCase().includes(searchTerm.toLowerCase())
     const eventMatch = !selectedEvent || volunteer.event === selectedEvent
     return nameMatch && eventMatch
   })
 
-  // ⚠️ XSS VULNERABILITY: Direct DOM manipulation to ensure XSS execution
-  // This bypasses React's sanitization and directly sets innerHTML
+
   useEffect(() => {
     if (data?.data) {
-      // Small delay to ensure refs are available
       setTimeout(() => {
         data.data.forEach((volunteer) => {
           const id = volunteer.id
 
-          // Set name HTML directly
+         
           if (nameRefs.current[id]) {
             const name = volunteer.fullName || volunteer.groupName || ""
             nameRefs.current[id].innerHTML = name
           }
 
-          // Set bio HTML directly
           if (bioRefs.current[id]) {
             const bio = volunteer.motivation || ""
             bioRefs.current[id].innerHTML = bio
           }
 
-          // Set address HTML directly
           if (addressRefs.current[id] && volunteer.address) {
             addressRefs.current[id].innerHTML = volunteer.address
           }
@@ -230,14 +182,12 @@ const VolunteerList = () => {
     setSelectedEvent("")
   }
 
-  // ⚠️ XSS VULNERABILITY: Directly rendering user input in the DOM
-  // This allows attackers to inject scripts via the search field
+
   const handleSearch = (e) => {
     const value = e.target.value
     setSearchTerm(value)
 
-    // ⚠️ EXTREMELY DANGEROUS: Never do this in real applications!
-    // This creates a DOM-based XSS vulnerability
+  
     document.getElementById("search-term-display").innerHTML = `Searching for: ${value}`
   }
 
@@ -294,7 +244,6 @@ const VolunteerList = () => {
                     value={searchTerm}
                     onChange={handleSearch}
                   />
-                  {/* ⚠️ XSS VULNERABILITY: This element will be populated with unsanitized user input */}
                   <div id="search-term-display" className="text-xs text-muted-foreground mt-1"></div>
                 </div>
 
@@ -351,7 +300,6 @@ const VolunteerList = () => {
                   {searchTerm && (
                     <Badge variant="secondary" className="flex items-center gap-1">
                       <Search className="h-3 w-3" />
-                      {/* ⚠️ XSS VULNERABILITY: Directly rendering user input */}
                       <span dangerouslySetInnerHTML={createMarkup(searchTerm)}></span>
                       <button
                         className="ml-1 rounded-full hover:bg-secondary-foreground/10"
@@ -418,8 +366,6 @@ const VolunteerList = () => {
                     const bio = volunteer.motivation || t("no_bio")
                     const avatarColor = stringToColor(name)
 
-                    // ⚠️ XSS VULNERABILITY: Directly using innerHTML to set content
-                    // This allows any script in the data to execute
                     return (
                       <motion.div key={volunteer.id} variants={cardVariants} whileHover="hover" layout>
                         <Card className="h-full overflow-hidden border border-border/50 transition-all duration-300">
@@ -448,7 +394,6 @@ const VolunteerList = () => {
                             )}
                           </CardHeader>
                           <CardContent>
-                            {/* ⚠️ XSS VULNERABILITY: Using direct DOM manipulation for bio */}
                             <div
                               className="text-muted-foreground text-sm line-clamp-3 overflow-hidden"
                               ref={(el) => (bioRefs.current[volunteer.id] = el)}
@@ -462,13 +407,11 @@ const VolunteerList = () => {
                               )}
                               {volunteer.email && (
                                 <Badge variant="secondary" className="text-xs">
-                                  {/* ⚠️ XSS VULNERABILITY: Email could contain malicious HTML */}
                                   <span dangerouslySetInnerHTML={createMarkup(volunteer.email)}></span>
                                 </Badge>
                               )}
                               {volunteer.address && (
                                 <Badge variant="secondary" className="text-xs">
-                                  {/* ⚠️ XSS VULNERABILITY: Using direct DOM manipulation for address */}
                                   <span ref={(el) => (addressRefs.current[volunteer.id] = el)}></span>
                                 </Badge>
                               )}
@@ -553,7 +496,6 @@ const VolunteerList = () => {
                                       </AvatarFallback>
                                     </Avatar>
                                     <div>
-                                      {/* ⚠️ XSS VULNERABILITY: Using direct DOM manipulation for name */}
                                       <CardTitle
                                         className="text-base"
                                         ref={(el) => (nameRefs.current[volunteer.id] = el)}

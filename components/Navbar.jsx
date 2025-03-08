@@ -15,9 +15,9 @@ import {FaHandsHelping} from "react-icons/fa";
 const navItems = [
     {name: "home", path: "#home"},
     {name: "about", path: "#about"},
-    {name: "events", path: "#events"},
-    {name: "volunteer", path: "#volunteer"},
+    {name: "volunteer", path: "/volunteer"},
     {name: "team", path: "/team"},
+    {name: "report", path: "/report"},
     {name: "contact", path: "/contact"},
 ];
 
