@@ -4,6 +4,7 @@ import TranslationsProvider from "@/components/TranslationsProvider";
 import initTranslations from "@/app/i18n";
 import Gallery from "@/components/Gallery";
 import ReportAlert from "@/components/ReportAlert";
+import VolunteerList from "@/components/VolunteerList";
 
 const i18nNamespaces = ['home'];
 
@@ -21,6 +22,7 @@ export default async function Home({ params }) {
                 <ReportAlert/>
                 <EventCarousel />
                 <VolunteerForm />
+                <VolunteerList/>
             </div>
         </TranslationsProvider>
     );

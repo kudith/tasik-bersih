@@ -36,12 +36,8 @@ const ContactForm = () => {
     const onSubmit = async (values) => {
         setIsSubmitting(true);
         try {
-            // Injection vulnerability: Directly concatenate user input into the command
             const response = await fetch(`/api/emails?name=${values.name}&email=${values.email}&message=${values.message}`, {
                 method: 'POST',
-                // headers: {
-                //     'Content-Type': 'application/json',
-                // },
                 body: JSON.stringify({
                     from: `${values.name} <${values.email}>`,
                     to: 'curtis.doyle20@ethereal.email',
