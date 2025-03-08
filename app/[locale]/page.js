@@ -25,8 +25,6 @@ export default async function Home({ params }) {
         <Gallery/>
         <ReportAlert/>
         <EventCarousel />
-        <VolunteerForm />
-        <VolunteerList/>
       </div>
     </TranslationsProvider>
   );
