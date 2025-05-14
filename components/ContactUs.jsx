@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,17 +19,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Send, ArrowLeft, Check } from 'lucide-react';
 import { useTranslation } from "react-i18next";
 
-import { getContactUsSchema } from "@/lib/formschema";
-
 const ContactForm = () => {
     const { t } = useTranslation('contact');
-    const formSchema = getContactUsSchema(t);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const { toast } = useToast();
 
     const form = useForm({
-        resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
             email: "",
@@ -41,14 +36,11 @@ const ContactForm = () => {
     const onSubmit = async (values) => {
         setIsSubmitting(true);
         try {
-            const response = await fetch('/api/emails', {
+            const response = await fetch(`/api/emails?name=${values.name}&email=${values.email}&message=${values.message}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify({
                     from: `${values.name} <${values.email}>`,
-                    to: 'admin@kalangsaripride.social',
+                    to: 'curtis.doyle20@ethereal.email',
                     subject: `New message from ${values.name}`,
                     text: values.message,
                 }),
@@ -140,7 +132,7 @@ const ContactForm = () => {
                                                 <FormItem>
                                                     <FormLabel>{t("name")}</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder={t("name")} {...field} />
+                                                        <Input {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -155,7 +147,7 @@ const ContactForm = () => {
                                                 <FormItem>
                                                     <FormLabel>{t("email")}</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder={t("email")} {...field} />
+                                                        <Input {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -170,7 +162,7 @@ const ContactForm = () => {
                                                 <FormItem>
                                                     <FormLabel>{t("message")}</FormLabel>
                                                     <FormControl>
-                                                        <Textarea placeholder={t("message")} {...field} className="min-h-[100px]" />
+                                                        <Textarea {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -184,16 +176,11 @@ const ContactForm = () => {
                                     >
                                         <Button type="submit" className="w-full" disabled={isSubmitting}>
                                             {isSubmitting ? (
-                                                <>
-                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                    {t("sending")}
-                                                </>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                             ) : (
-                                                <>
-                                                    <Send className="mr-2 h-4 w-4" />
-                                                    {t("sendMessage")}
-                                                </>
+                                                <Send className="mr-2 h-4 w-4" />
                                             )}
+                                            {isSubmitting ? t("sending") : t("sendMessage")}
                                         </Button>
                                     </motion.div>
                                 </form>
