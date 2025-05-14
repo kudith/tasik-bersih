@@ -1,0 +1,8 @@
+PLACEHOLDER FOR AVATAR IMAGES
+
+Please add the following image files to this directory:
+
+1. chatbot-avatar.png - A circular avatar for the chatbot (recommended size: 100x100px)
+2. user-avatar.png - A circular avatar for the user (recommended size: 100x100px)
+
+These images will be used by the chatbot interface. For now, the application will fallback to placeholders if these images are not found. 

@@ -47,51 +47,67 @@ const Hero = () => {
   }
 
   return (
-    <section id="home" className="relative h-screen flex items-center justify-center px-4 md:px-8">
-      <Suspense>
-        <motion.div
-          className="container max-w-4xl mx-auto flex flex-col items-center text-center space-y-6"
-          initial="hidden"
-          animate="visible"
-          variants={fadeIn}
-        >
-          <motion.h1
-            className="text-4xl md:text-6xl font-bold tracking-tight text-black leading-tight"
-            variants={slideUp}
-          >
-            {tittle}
-          </motion.h1>
-
-          <motion.p
-            className="text-lg md:text-xl text-gray-60 leading-relaxed max-w-4xl"
-            variants={slideUp}
-          >
-            {subtittle}
-          </motion.p>
-
+    <section id="home" className="relative w-full h-screen overflow-hidden">
+      {/* Background image with proper sizing */}
+      <div 
+        className="absolute inset-0 w-full bg-cover bg-center bg-no-repeat z-0"
+        style={{ 
+          backgroundImage: `url('/images/hero.png')`,
+          backgroundSize: 'cover',
+          filter: 'brightness(0.5)' // Added to make the background dimmer
+        }}
+      ></div>
+      
+      {/* Optional dark overlay for better text contrast */}
+      <div className="absolute inset-0 w-full h-full bg-black bg-opacity-40 z-10"></div>
+      
+      {/* Content container */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center px-4 md:px-8">
+        <Suspense>
           <motion.div
-            className="flex flex-col sm:flex-row gap-4 mt-6 justify-center"
-            variants={slideUp}
+            className="container max-w-4xl mx-auto flex flex-col items-center text-center space-y-6"
+            initial="hidden"
+            animate="visible"
+            variants={fadeIn}
           >
-            <motion.button
-              className="flex items-center justify-center py-3 px-6 bg-black text-white rounded-md shadow-lg hover:bg-gray-900 transition-all duration-300"
-              onClick={handleDonateClick}
-              whileTap={buttonClick.tap}
+            <motion.h1
+              className="text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight" // Changed to a softer white
+              variants={slideUp}
             >
-              <FaHandsHelping className="mr-2" />
-              {t('contribute_now')}
-            </motion.button>
-            <motion.button
-              className="flex items-center justify-center py-3 px-6 bg-gray-100 text-black border border-gray-300 rounded-md shadow-lg hover:bg-gray-200 transition-all duration-300"
+              {tittle}
+            </motion.h1>
+
+            <motion.p
+              className="text-lg md:text-xl text-gray-300 leading-relaxed max-w-4xl" // Changed to a softer gray
+              variants={slideUp}
+            >
+              {subtittle}
+            </motion.p>
+
+            <motion.div
+              className="flex flex-col sm:flex-row gap-4 mt-6 justify-center"
+              variants={slideUp}
+            >
+              <motion.button
+                className="flex items-center justify-center py-3 px-6 bg-white text-black rounded-md shadow-lg hover:bg-gray-100 transition-all duration-300"
+                onClick={handleDonateClick}
+                whileTap={buttonClick.tap}
+              >
+                <FaHandsHelping className="mr-2" />
+                {t('contribute_now')}
+              </motion.button>
+              <motion.button
+                className="flex items-center justify-center py-3 px-6 border-2 border-white text-white rounded-md shadow-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300"
                 onClick={handleLearnMoreClick}
-              whileTap={buttonClick.tap}
-            >
-              <FaLeaf className="mr-2" />
-              {t('learn_more')}
-            </motion.button>
+                whileTap={buttonClick.tap}
+              >
+                <FaLeaf className="mr-2" />
+                {t('learn_more')}
+              </motion.button>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      </Suspense>
+        </Suspense>
+      </div>
     </section>
   );
 };

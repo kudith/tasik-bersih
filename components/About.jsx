@@ -1,132 +1,280 @@
 "use client";
 import { motion } from "framer-motion";
 import { useInView } from 'react-intersection-observer';
-import Image from 'next/image';
 import * as React from "react";
-import { SkeletonAboutUs } from "@/components/skeleton/SkeletonAboutUs";
-import useSWR from "swr";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
-
-const fetcher = url => axios.get(url).then(res => res.data);
+import { 
+  FaUsers, 
+  FaBullseye, 
+  FaLightbulb, 
+  FaHandsHelping,
+  FaLeaf,
+  FaRecycle,
+  FaWater,
+  FaMapMarkedAlt,
+  FaHandHoldingHeart,
+  FaCalendarAlt,
+  FaImages,
+  FaRobot
+} from "react-icons/fa";
 
 const AboutUs = React.memo(() => {
-    const { i18n, t } = useTranslation();
-    const locale = i18n.language;
+    const { t } = useTranslation();
 
-    const { data, error } = useSWR(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/about-us?locale=${locale}&populate=*`, fetcher);
+    // Animasi untuk setiap bagian
+    const [refHeader, inViewHeader] = useInView({ triggerOnce: true, threshold: 0.1 });
+    const [refWhoWeAre, inViewWhoWeAre] = useInView({ triggerOnce: true, threshold: 0.1 });
+    const [refMission, inViewMission] = useInView({ triggerOnce: true, threshold: 0.1 });
+    const [refVision, inViewVision] = useInView({ triggerOnce: true, threshold: 0.1 });
+    const [refFeatures, inViewFeatures] = useInView({ triggerOnce: true, threshold: 0.1 });
 
-    const [ref1, inView1] = useInView({ triggerOnce: true });
-    const [ref2, inView2] = useInView({ triggerOnce: true });
-    const [ref3, inView3] = useInView({ triggerOnce: true });
-    const [ref4, inView4] = useInView({ triggerOnce: true });
-    const [ref5, inView5] = useInView({ triggerOnce: true });
-    const [ref6, inView6] = useInView({ triggerOnce: true });
+    // Data konten TasikBersih
+    const tasikBersihData = {
+        who_we_are: "TasikBersih adalah platform digital yang didedikasikan untuk meningkatkan kesadaran dan partisipasi masyarakat dalam menjaga kebersihan lingkungan Kota Tasikmalaya. Melalui website ini, masyarakat, terutama mahasiswa dan relawan, dapat berkolaborasi dalam berbagai kegiatan kebersihan yang diselenggarakan, seperti pembersihan sampah di area umum, sungai, dan danau.",
+        
+        mission: "Misi kami adalah memfasilitasi kolaborasi masyarakat dalam menjaga kebersihan Kota Tasikmalaya melalui teknologi digital. Kami bertujuan untuk menyediakan platform yang memudahkan pelaporan lokasi tercemar, koordinasi kegiatan kebersihan, dan pengelolaan sumber daya untuk aksi nyata pelestarian lingkungan.",
+        
+        vision: "Kami memimpikan Kota Tasikmalaya yang bersih, hijau, dan berkelanjutan melalui partisipasi aktif generasi muda. TasikBersih bertujuan menciptakan ekosistem digital yang menghubungkan relawan, donatur, dan masyarakat umum dalam gerakan peduli lingkungan yang terkoordinasi dan berdampak nyata."
+    };
 
-    if (error) return <p>Error loading data: {error.message}</p>;
-    if (!data) return <SkeletonAboutUs />;
-
-    const { image_1, image_2, image_3, who_we_are, vision, mission } = data.data;
+    // Fitur utama website
+    const features = [
+        {
+            icon: <FaUsers />,
+            title: "Pendaftaran Relawan",
+            description: "Mendaftar dan berpartisipasi dalam kegiatan kebersihan yang diselenggarakan di berbagai lokasi."
+        },
+        {
+            icon: <FaMapMarkedAlt />,
+            title: "Laporan Lokasi Tercemar",
+            description: "Melaporkan lokasi yang tercemar dengan detail dan gambar untuk tindak lanjut."
+        },
+        {
+            icon: <FaHandHoldingHeart />,
+            title: "Sistem Donasi",
+            description: "Berkontribusi melalui donasi uang atau barang untuk mendukung kegiatan kebersihan."
+        },
+        {
+            icon: <FaCalendarAlt />,
+            title: "Jadwal Kegiatan",
+            description: "Informasi lengkap tentang kegiatan kebersihan mendatang yang dapat diikuti."
+        },
+        {
+            icon: <FaImages />,
+            title: "Dokumentasi Kegiatan",
+            description: "Galeri foto dan laporan kegiatan yang telah dilaksanakan sebelumnya."
+        },
+        {
+            icon: <FaRobot />,
+            title: "Chatbot Bantuan",
+            description: "Asisten virtual untuk menjawab pertanyaan dan membantu navigasi website."
+        }
+    ];
 
     return (
-        <section id="about" className="py-16 px-4 md:px-8 bg-background text-gray-900">
-            <div className="container max-w-6xl mx-auto">
+        <section id="tentang" className="py-20">
+            <div className="container mx-auto px-4 max-w-7xl">
+                {/* Header Section */}
                 <motion.div
-                    className="relative overflow-hidden rounded-lg shadow-lg mb-12"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: inView1 ? 1 : 0 }}
-                    transition={{ duration: 1 }}
-                    ref={ref1}
+                    ref={refHeader}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={inViewHeader ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center mb-16"
                 >
-                    <Image
-                        src={image_1.url}
-                        alt="About Us Image 1"
-                        width={700}
-                        height={400}
-                        sizes={"(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"}
-                        quality={100}
-                        className="w-full h-96 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
-                        loading="lazy"
-                    />
+                    <div className="inline-block mb-3">
+                        <span className="text-sm font-medium px-4 py-1 rounded-full">Tentang Platform Kami</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-bold mb-6">
+                        Mengenal <span>TasikBersih</span>
+                    </h2>
+                    <div className="w-24 h-1 mx-auto mb-8 rounded-full"></div>
                 </motion.div>
 
+                {/* Siapa Kami */}
                 <motion.div
-                    className="text-center space-y-8"
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={{ opacity: inView2 ? 1 : 0, y: inView2 ? 0 : 50 }}
-                    transition={{ duration: 1, delay: 0.3 }}
-                    ref={ref2}
+                    className="bg-white rounded-xl shadow-xl overflow-hidden mb-20"
+                    ref={refWhoWeAre}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={inViewWhoWeAre ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
                 >
-                    <h2 className="text-5xl font-extrabold text-gray-800 mb-4">{t('about_us')}</h2>
-                    <p className="text-xl text-gray-700 leading-relaxed">{who_we_are}</p>
+                    <div className="grid grid-cols-1 md:grid-cols-2">
+                        <div className="p-8 md:p-12 flex flex-col justify-center">
+                            <h3 className="text-2xl md:text-3xl font-bold mb-6">Siapa Kami?</h3>
+                            <p className="leading-relaxed">{tasikBersihData.who_we_are}</p>
+                            <div className="flex flex-wrap gap-3 mt-6">
+                                <span className="text-xs font-medium px-3 py-1 rounded-full flex items-center">
+                                    <FaLeaf className="mr-1" size={12} /> Pelestarian Lingkungan
+                                </span>
+                                <span className="text-xs font-medium px-3 py-1 rounded-full flex items-center">
+                                    <FaUsers className="mr-1" size={12} /> Partisipasi Komunitas
+                                </span>
+                                <span className="text-xs font-medium px-3 py-1 rounded-full flex items-center">
+                                    <FaHandsHelping className="mr-1" size={12} /> Kolaborasi Digital
+                                </span>
+                            </div>
+                        </div>
+                        <div className="p-12 flex items-center justify-center">
+                            <div className="text-center">
+                                <FaWater className="w-24 h-24 mx-auto mb-6" />
+                                <h4 className="text-xl font-semibold">Kebersihan Kota Tasikmalaya</h4>
+                                <p className="mt-2">Bersama-sama untuk lingkungan yang lebih baik</p>
+                            </div>
+                        </div>
+                    </div>
                 </motion.div>
 
-                <div className="my-8 border-t border-gray-300"></div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                {/* Misi & Visi */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                    {/* Misi Card */}
                     <motion.div
-                        className="flex flex-col justify-center"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: inView3 ? 1 : 0, y: inView3 ? 0 : 50 }}
-                        transition={{ duration: 1, delay: 0.7 }}
-                        ref={ref3}
+                        className="bg-white rounded-xl shadow-xl overflow-hidden h-full"
+                        ref={refMission}
+                        initial={{ opacity: 0, x: -40 }}
+                        animate={inViewMission ? { opacity: 1, x: 0 } : { opacity: 0, x: -40 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
                     >
-                        <h3 className="text-4xl font-bold text-gray-800 mb-4">{t('mission')}</h3>
-                        <p className="text-lg text-gray-700 leading-relaxed">{mission}</p>
+                        <div className="py-6 px-8">
+                            <div className="flex items-center">
+                                <div className="p-3 rounded-lg mr-4">
+                                    <FaBullseye className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-2xl font-bold">Misi Kami</h3>
+                            </div>
+                        </div>
+                        <div className="p-8">
+                            <p className="leading-relaxed">
+                                {tasikBersihData.mission}
+                            </p>
+                            <div className="mt-6 pt-6 border-t border-gray-100">
+                                <div className="flex items-center mb-4">
+                                    <div className="p-2 rounded-md mr-4">
+                                        <FaHandsHelping className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-medium">Kolaborasi Aktif</h4>
+                                        <p className="text-sm">Menghubungkan relawan dan komunitas</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="p-2 rounded-md mr-4">
+                                        <FaLeaf className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-medium">Aksi Nyata</h4>
+                                        <p className="text-sm">Kegiatan kebersihan yang berdampak</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
 
+                    {/* Visi Card */}
                     <motion.div
-                        className="relative overflow-hidden rounded-lg shadow-lg"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: inView4 ? 1 : 0 }}
-                        transition={{ duration: 1, delay: 0.7 }}
-                        ref={ref4}
+                        className="bg-white rounded-xl shadow-xl overflow-hidden h-full"
+                        ref={refVision}
+                        initial={{ opacity: 0, x: 40 }}
+                        animate={inViewVision ? { opacity: 1, x: 0 } : { opacity: 0, x: 40 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
                     >
-                        <Image
-                            src={image_3?.url}
-                            alt="Our Mission Image"
-                            width={700}
-                            height={400}
-                            quality={100}
-                            className="w-full h-80 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
-                            loading="lazy"
-                        />
+                        <div className="py-6 px-8">
+                            <div className="flex items-center">
+                                <div className="p-3 rounded-lg mr-4">
+                                    <FaLightbulb className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-2xl font-bold">Visi Kami</h3>
+                            </div>
+                        </div>
+                        <div className="p-8">
+                            <p className="leading-relaxed">
+                                {tasikBersihData.vision}
+                            </p>
+                            <div className="mt-6 pt-6 border-t border-gray-100">
+                                <div className="flex items-center mb-4">
+                                    <div className="p-2 rounded-md mr-4">
+                                        <FaRecycle className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-medium">Kota Berkelanjutan</h4>
+                                        <p className="text-sm">Tasikmalaya yang bersih dan hijau</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center">
+                                    <div className="p-2 rounded-md mr-4">
+                                        <FaUsers className="w-4 h-4" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-medium">Generasi Peduli</h4>
+                                        <p className="text-sm">Melibatkan anak muda dalam aksi lingkungan</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                    <motion.div
-                        className="relative overflow-hidden rounded-lg shadow-lg order-2 md:order-1"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: inView5 ? 1 : 0 }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                        ref={ref5}
-                    >
-                        <Image
-                            src={image_2[0]?.url}
-                            alt="Our Vision Image"
-                            width={700}
-                            height={400}
-                            quality={100}
-                            className="w-full h-80 object-cover transition-transform duration-500 ease-in-out hover:scale-105"
-                            loading="lazy"
-                        />
-                    </motion.div>
+                {/* Fitur Kami */}
+                <motion.div
+                    ref={refFeatures}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={inViewFeatures ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+                    transition={{ duration: 0.8, delay: 0.3 }}
+                    className="mb-12"
+                >
+                    <div className="text-center mb-12">
+                        <h3 className="text-3xl font-bold mb-4">
+                            Layanan Kami di <span>TasikBersih</span>
+                        </h3>
+                        <p className="max-w-2xl mx-auto">
+                            TasikBersih menawarkan berbagai layanan interaktif yang dirancang untuk mendorong partisipasi masyarakat dalam menjaga kebersihan dan kelestarian lingkungan. Bergabunglah dengan kami untuk menciptakan dampak positif di Kota Tasikmalaya.
+                        </p>
+                    </div>
 
-                    <motion.div
-                        className="flex flex-col justify-center order-1 md:order-2"
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: inView6 ? 1 : 0, y: inView6 ? 0 : 50 }}
-                        transition={{ duration: 1, delay: 0.5 }}
-                        ref={ref6}
-                    >
-                        <h3 className="text-4xl font-bold text-gray-800 mb-4">{t('vision')}</h3>
-                        <p className="text-lg text-gray-700 leading-relaxed">{vision}</p>
-                    </motion.div>
-                </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {features.map((feature, index) => (
+                            <motion.div
+                                key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={inViewFeatures ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                                transition={{ duration: 0.5, delay: 0.2 + index * 0.1 }}
+                                className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300 group"
+                            >
+                                <div className="w-12 h-12 rounded-lg flex items-center justify-center mb-4">
+                                    {React.cloneElement(feature.icon, { className: "w-6 h-6" })}
+                                </div>
+                                <h4 className="text-xl font-semibold mb-2">{feature.title}</h4>
+                                <p>{feature.description}</p>
+                            </motion.div>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* CTA Section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="text-center mt-16 rounded-2xl p-8 md:p-12 shadow-xl"
+                >
+                    <h3 className="text-2xl md:text-3xl font-bold mb-4">Bergabunglah dengan Gerakan TasikBersih</h3>
+                    <p className="mb-8 max-w-2xl mx-auto">
+                        Jadilah bagian dari perubahan positif. Daftarkan diri Anda sebagai relawan, laporkan lokasi tercemar, atau berikan donasi untuk mendukung kegiatan kebersihan Kota Tasikmalaya.
+                    </p>
+                    <div className="flex flex-wrap justify-center gap-4">
+                        <button className="font-medium px-6 py-3 rounded-lg transition-colors duration-300 shadow-md">
+                            Daftar Sebagai Relawan
+                        </button>
+                        <button className="border font-medium px-6 py-3 rounded-lg transition-colors duration-300 shadow-md">
+                            Laporkan Lokasi
+                        </button>
+                    </div>
+                </motion.div>
             </div>
         </section>
     );
 });
+
+AboutUs.displayName = "AboutUs";
 
 export default AboutUs;

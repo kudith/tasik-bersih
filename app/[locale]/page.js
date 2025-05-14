@@ -18,7 +18,7 @@ export default async function Home({ params }) {
       namespaces={i18nNamespaces}
       locale={locale}
       resources={resources}>
-      <div>
+      <div className="mx-auto">
         <Hero />
         <AboutUs />
         <Gallery/>

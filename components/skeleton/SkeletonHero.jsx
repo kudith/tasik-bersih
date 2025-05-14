@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function SkeletonHero() {
   return (
-    <section className="relative h-screen flex items-center justify-center px-4 md:px-8">
+    <section className="relative min-h-screen flex items-center justify-center px-4 md:px-8">
       <div className="container max-w-3xl mx-auto flex flex-col items-center text-center space-y-6">
         {/* Title */}
         <Skeleton className="h-16 md:h-24 w-3/4 md:w-full" />
