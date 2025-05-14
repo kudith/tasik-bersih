@@ -1,46 +1,19 @@
 "use client";
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedin, FaEnvelope, FaPhone } from "react-icons/fa";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
-import { useInView } from 'react-intersection-observer';
 
 export function Footer() {
     const { t } = useTranslation('footer');
-    const [ref, inView] = useInView({ triggerOnce: true });
-
-    const containerVariants = {
-        hidden: { opacity: 0, y: 50 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                staggerChildren: 0.3,
-                duration: 0.8,
-                ease: "easeInOut"
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 50 },
-        visible: { opacity: 1, y: 0 }
-    };
 
     return (
-        <motion.footer
-            ref={ref}
-            className="py-12 px-8 bg-black text-white mt-20"
-            initial="hidden"
-            animate={inView ? "visible" : "hidden"}
-            variants={containerVariants}
-        >
+        <footer className="py-12 px-8 bg-black text-white mt-auto">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
                 {/* About Section */}
-                <motion.div variants={itemVariants}>
-                    <h2 className="text-2xl font-bold mb-4">kalangsari
-                    <span className="text-kalang">Pride</span>
+                <div>
+                    <h2 className="text-2xl font-bold font-inknut bg-clip-text text-transparent bg-gradient-to-r from-kalang to-primary">
+                        TasikBersih
                     </h2>
                     <p className="text-gray-400 mb-4">
                         {t('about_us')}
@@ -48,10 +21,10 @@ export function Footer() {
                     <Link href="/about" passHref>
                         <span className="text-gray-400 hover:text-white underline">{t('learn_more')}</span>
                     </Link>
-                </motion.div>
+                </div>
 
                 {/* Navigation Links */}
-                <motion.div variants={itemVariants}>
+                <div>
                     <h2 className="text-2xl font-bold mb-4">{t('quick_links')}</h2>
                     <ul className="space-y-2">
                         <li>
@@ -70,10 +43,10 @@ export function Footer() {
                             </Link>
                         </li>
                     </ul>
-                </motion.div>
+                </div>
 
                 {/* Contact Information */}
-                <motion.div variants={itemVariants}>
+                <div>
                     <h2 className="text-2xl font-bold mb-4">{t('get_in_touch')}</h2>
                     <p className="text-gray-400">{t('have_questions')}</p>
                     <ul className="mt-4 space-y-2">
@@ -86,14 +59,11 @@ export function Footer() {
                             <span>{t('phone')}</span>
                         </li>
                     </ul>
-                </motion.div>
+                </div>
             </div>
 
             {/* Social Media & Donate */}
-            <motion.div
-                className="mt-12 border-t border-gray-700 pt-8"
-                variants={itemVariants}
-            >
+            <div className="mt-12 border-t border-gray-700 pt-8">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
                     {/* Social Media Icons */}
                     <div className="flex space-x-4">
@@ -120,7 +90,7 @@ export function Footer() {
                     </div>
 
                     {/* Donate Button */}
-                    <motion.div className="mt-4 md:mt-0">
+                    <div className="mt-4 md:mt-0">
                         <Link href="/donate" passHref>
                             <span>
                                 <Button className="bg-secondary text-primary py-6 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-300 transition-colors duration-300">
@@ -128,14 +98,14 @@ export function Footer() {
                                 </Button>
                             </span>
                         </Link>
-                    </motion.div>
+                    </div>
                 </div>
 
                 {/* Footer Bottom Text */}
                 <div className="mt-8 text-center text-gray-400 text-sm">
-                    &copy; {new Date().getFullYear()} kalangsariPride. {t('all_rights_reserved')}
+                    &copy; {new Date().getFullYear()} TasikBersih. {t('all_rights_reserved')}
                 </div>
-            </motion.div>
-        </motion.footer>
+            </div>
+        </footer>
     );
 }
