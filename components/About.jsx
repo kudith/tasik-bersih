@@ -17,9 +17,11 @@ import {
   FaImages,
   FaRobot
 } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const AboutUs = React.memo(() => {
     const { t } = useTranslation();
+    const router = useRouter();
 
     // Animasi untuk setiap bagian
     const [refHeader, inViewHeader] = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -262,10 +264,18 @@ const AboutUs = React.memo(() => {
                         Jadilah bagian dari perubahan positif. Daftarkan diri Anda sebagai relawan, laporkan lokasi tercemar, atau berikan donasi untuk mendukung kegiatan kebersihan Kota Tasikmalaya.
                     </p>
                     <div className="flex flex-wrap justify-center gap-4">
-                        <button className="font-medium px-6 py-3 rounded-lg transition-colors duration-300 shadow-md">
+                        <button 
+                        onClick={() => {
+                            router.push("/volunteer");
+                        }}
+                        className="font-medium px-6 py-3 rounded-lg transition-colors duration-300 shadow-md">
                             Daftar Sebagai Relawan
                         </button>
-                        <button className="border font-medium px-6 py-3 rounded-lg transition-colors duration-300 shadow-md">
+                        <button 
+                        onClick={() => {
+                            router.push("/report");
+                        }}
+                        className="border font-medium px-6 py-3 rounded-lg transition-colors duration-300 shadow-md">
                             Laporkan Lokasi
                         </button>
                     </div>

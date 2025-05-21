@@ -82,18 +82,32 @@ export function ReportPolluted() {
             const imageUploadPromises = data.images.map(async (image) => {
                 const formData = new FormData();
                 formData.append('files', image);
-
-                const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload/`, {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!uploadResponse.ok) {
-                    throw new Error('Failed to upload image');
+                
+                try {
+                    // Remove trailing slash and log attempt
+                    console.log(`Attempting to upload ${image.name} (${image.size} bytes)`);
+                    
+                    const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/upload`, {
+                        method: 'POST',
+                        body: formData,
+                        // Explicitly not setting Content-Type header for FormData
+                    });
+                    
+                    // Get detailed error information if the request fails
+                    if (!uploadResponse.ok) {
+                        const errorText = await uploadResponse.text();
+                        console.error('Upload failed with status:', uploadResponse.status);
+                        console.error('Response body:', errorText);
+                        throw new Error(`Failed to upload image: ${uploadResponse.status} ${errorText.substring(0, 100)}`);
+                    }
+                    
+                    const uploadData = await uploadResponse.json();
+                    console.log('Upload successful, response:', uploadData);
+                    return uploadData[0].id;
+                } catch (error) {
+                    console.error('Detailed upload error:', error);
+                    throw error;
                 }
-
-                const uploadData = await uploadResponse.json();
-                return uploadData[0].id;
             });
 
             const uploadedImageIds = await Promise.all(imageUploadPromises);
