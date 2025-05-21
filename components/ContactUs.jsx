@@ -36,13 +36,30 @@ const ContactForm = () => {
     const onSubmit = async (values) => {
         setIsSubmitting(true);
         try {
-            const response = await fetch(`/api/emails?name=${values.name}&email=${values.email}&message=${values.message}`, {
+            // Format the message as HTML for better readability
+            const formattedMessage = `
+                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                    <h2>New Contact Message from TasikBersih Website</h2>
+                    <p><strong>From:</strong> ${values.name}</p>
+                    <p><strong>Email:</strong> ${values.email}</p>
+                    <p><strong>Message:</strong></p>
+                    <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #ccc;">
+                        ${values.message.replace(/\n/g, '<br>')}
+                    </div>
+                    <p style="color: #777; font-size: 12px; margin-top: 30px;">This message was sent from the TasikBersih contact form.</p>
+                </div>
+            `;
+
+            const response = await fetch('/api/emails', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({
                     from: `${values.name} <${values.email}>`,
-                    to: 'curtis.doyle20@ethereal.email',
-                    subject: `New message from ${values.name}`,
-                    text: values.message,
+                    to: process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'admin@TasikBersih.social',
+                    subject: `[TasikBersih] New message from ${values.name}`,
+                    text: formattedMessage,
                 }),
             });
 

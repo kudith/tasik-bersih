@@ -1,23 +1,24 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
-// Konfigurasi nodemailer untuk Titan Email
+// Configure nodemailer using environment variables
 const transporter = nodemailer.createTransport({
-    host: 'smtp.ethereal.email',
-    port: 587,
+    host: process.env.EMAIL_SERVER_HOST,
+    port: process.env.EMAIL_SERVER_PORT,
+    secure: process.env.EMAIL_SERVER_SECURE === 'true',
     auth: {
-        user: 'curtis.doyle20@ethereal.email',
-        pass: 'EQtwx4M5smwaEdWRcv'
+        user: process.env.EMAIL_SERVER_USER,
+        pass: process.env.EMAIL_SERVER_PASSWORD,
     }
 });
 
-// Fungsi POST untuk mengirim email
+// POST function for sending emails
 export async function POST(req) {
     try {
-        // Parsing data JSON dari permintaan
+        // Parse JSON data from request
         const { from, to, subject, text } = await req.json();
 
-        // Validasi input
+        // Validate input
         if (!from || !to || !subject || !text) {
             return NextResponse.json(
                 { message: 'Invalid input: Missing required fields' },
@@ -25,7 +26,7 @@ export async function POST(req) {
             );
         }
 
-        // Validasi format email menggunakan regex
+        // Validate email format using regex
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(to)) {
             return NextResponse.json(
@@ -34,33 +35,33 @@ export async function POST(req) {
             );
         }
 
-        // Informasi untuk debugging
+        // Debugging information
         console.log('Preparing to send email:', { from, to, subject, text });
 
-        // Kirim email menggunakan nodemailer (FORMAT HTML)
+        // Send email using nodemailer (HTML FORMAT)
         const info = await transporter.sendMail({
-            from: process.env.EMAIL_USER, // Gunakan email yang terautentikasi
-            replyTo: from, // Gunakan email pengirim yang diinput oleh pengguna sebagai reply-to
-            to, // Email penerima
-            subject, // Subjek email
-            html: text, // <== Ubah dari "text" ke "html"
+            from: `"TasikBersih Contact" <${process.env.EMAIL_SERVER_USER}>`,
+            replyTo: from, // Use sender's email from user input as reply-to
+            to, // Recipient email
+            subject, // Email subject
+            html: text, // Changed from "text" to "html"
         });
 
-        // Log detail pengiriman
+        // Log sending details
         console.log('Email sent successfully:', info);
 
-        // Respon sukses
+        // Success response
         return NextResponse.json({ message: 'Email sent successfully', info }, { status: 200 });
     } catch (error) {
-        // Log error untuk debugging
+        // Log error for debugging
         console.error('Error sending email:', error);
 
-        // Respon gagal
+        // Error response
         return NextResponse.json(
             {
                 message: 'Failed to send email',
-                error: error.message, // Pesan error utama
-                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined, // Tampilkan stack hanya di development
+                error: error.message, // Main error message
+                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined, // Show stack only in development
             },
             { status: 500 }
         );
