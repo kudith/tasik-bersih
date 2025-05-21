@@ -22,7 +22,7 @@ export default async function Home({ params }) {
                 <ReportAlert/>
                 <EventCarousel />
                 <VolunteerForm />
-                <VolunteerList/>
+                {/* <VolunteerList/> */}
             </div>
         </TranslationsProvider>
     );

@@ -103,6 +103,7 @@ export function VolunteerForm() {
                 }
             };
 
+            // Submit to Strapi
             const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/volunteers`, {
                 method: 'POST',
                 headers: {
@@ -112,6 +113,35 @@ export function VolunteerForm() {
             });
 
             if (response.ok) {
+                // Get event details for email
+                const selectedEvent = events.find(event => event.event_name === data.event);
+                if (!selectedEvent) {
+                    throw new Error('Selected event not found');
+                }
+
+                // Send confirmation email
+                const emailPayload = {
+                    email: data.email,
+                    fullName: data.groupName || data.fullName,
+                    event: data.event,
+                    date: selectedEvent.date,
+                    time: selectedEvent.time || "09:00",
+                    location: selectedEvent.location || "Kalangsari",
+                    imageUrl: selectedEvent.poster?.url || "https://via.placeholder.com/600x400?text=Event+Image"
+                };
+
+                const emailResponse = await fetch('/api/sendConfirmationEmail', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(emailPayload),
+                });
+
+                if (!emailResponse.ok) {
+                    console.error('Failed to send confirmation email');
+                }
+
                 setIsThanksOpen(true);
             } else {
                 alert('Failed to register volunteer. Check console for details.');
@@ -122,7 +152,7 @@ export function VolunteerForm() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [events]);
 
     const handleConfirm = useCallback(async () => {
         setIsDialogOpen(false);

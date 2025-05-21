@@ -158,10 +158,24 @@ const DonationForm = React.memo(() => {
     }
   }, [token]);
 
+  // 1. Update the handleSelectAmount function to trigger validation
   const handleSelectAmount = useCallback((amount) => {
     setSelectedAmount(amount);
-    setValue("donationAmount", amount, { shouldValidate: false }); // 11. Validasi sengaja dimatikan
+    setValue("donationAmount", amount, { shouldValidate: true }); // Changed to validate
   }, [setValue]);
+
+  // 2. Create a function to handle the anonymous checkbox change
+  const handleAnonymousChange = useCallback((checked) => {
+    setValue("isAnonymous", checked);
+    
+    // If anonymous is checked, we can set a placeholder or clear the name field
+    if (checked) {
+      setValue("fullName", "Anonymous", { shouldValidate: true });
+    }
+    
+    // Trigger validation to update isValid state
+    form.trigger();
+  }, [setValue, form]);
 
   const handleInputChange = useCallback((e) => {
     const value = e.target.value.replace(/IDR\s*/i, '');
@@ -236,7 +250,7 @@ const DonationForm = React.memo(() => {
                     <FormControl>
                       <Checkbox
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(checked) => handleAnonymousChange(checked)}
                       />
                     </FormControl>
                     <FormLabel htmlFor="anonymous"
@@ -325,9 +339,9 @@ const DonationForm = React.memo(() => {
                 <AlertDialogTrigger asChild>
                   <Button
                     type="button"
-                    className={`w-full ${!isValid ? 'cursor-not-allowed' : ''}`}
+                    className="w-full"
                     onClick={() => setIsDialogOpen(true)}
-                    disabled={isLoading}
+                    disabled={isLoading || !isValid}
                   >
                     {isLoading ? (
                       <>

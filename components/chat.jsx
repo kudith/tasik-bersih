@@ -28,8 +28,7 @@ export default function ChatMessage() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [currentModel, setCurrentModel] = useState('Llama 4 Maverick');
 
-  // New state for API selection
-  const [selectedApi, setSelectedApi] = useState('gemini'); // 'openrouter' or 'gemini'
+  // Remove selectedApi state and just keep Gemini models
   const [geminiModel, setGeminiModel] = useState('gemini-2.5-flash-preview-04-17'); // Default Gemini model
 
   const messagesEndRef = useRef(null);
@@ -194,19 +193,15 @@ export default function ChatMessage() {
         userMessage
       ];
 
-      // Set the API endpoint based on selected API
-      const apiUrl = selectedApi === 'gemini' ? '/api/chat-gemini' : '/api/chat';
+      // Set the API endpoint to Gemini only
+      const apiUrl = '/api/chat-gemini';
 
-      // Prepare request body based on selected API
+      // Prepare request body for Gemini
       const requestBody = {
         messages: allMessages,
         hasMultimodalContent: !!selectedImage,
+        model: geminiModel
       };
-
-      // Add model parameter for Gemini
-      if (selectedApi === 'gemini') {
-        requestBody.model = geminiModel;
-      }
 
       // Call API
       const response = await fetch(apiUrl, {
@@ -226,16 +221,8 @@ export default function ChatMessage() {
         }
       }
 
-      // Get model used from response headers if available
-      const modelUsed = response.headers.get('X-Model-Used');
-      if (modelUsed) {
-        // Extract model name from the full path
-        const modelName = modelUsed.split('/').pop().split(':')[0];
-        setCurrentModel(modelName || 'AI Assistant');
-      } else {
-        // If no model info in header, set based on selected API
-        setCurrentModel(selectedApi === 'gemini' ? geminiModel : 'OpenRouter AI');
-      }
+      // Set model name based on Gemini model selected
+      setCurrentModel(geminiModel);
 
       // Handle streaming response
       const reader = response.body.getReader();
@@ -584,31 +571,18 @@ export default function ChatMessage() {
           </div>
         </div>
         <div className="flex items-center space-x-3">
-          {/* API Selector */}
+          {/* Gemini Model Selector */}
           <div className="hidden sm:flex items-center space-x-2">
             <select
-              value={selectedApi}
-              onChange={(e) => setSelectedApi(e.target.value)}
+              value={geminiModel}
+              onChange={(e) => setGeminiModel(e.target.value)}
               className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1"
               disabled={isLoading}
             >
-              <option value="openrouter">OpenRouter</option>
-              <option value="gemini">Gemini</option>
+              {geminiModels.map(model => (
+                <option key={model.id} value={model.id}>{model.name}</option>
+              ))}
             </select>
-
-            {/* Gemini Model Selector - only show if Gemini is selected */}
-            {selectedApi === 'gemini' && (
-              <select
-                value={geminiModel}
-                onChange={(e) => setGeminiModel(e.target.value)}
-                className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1"
-                disabled={isLoading}
-              >
-                {geminiModels.map(model => (
-                  <option key={model.id} value={model.id}>{model.name}</option>
-                ))}
-              </select>
-            )}
           </div>
 
           <motion.div
@@ -618,7 +592,7 @@ export default function ChatMessage() {
           />
           <div className="inline-flex items-center gap-1">
             <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Powered by</span>
-            <span className="text-xs font-medium bg-gradient-to-r from-blue-500 to-teal-500 text-white px-2 py-0.5 rounded-full">{currentModel}</span>
+            <span className="text-xs font-medium bg-gradient-to-r from-blue-500 to-teal-500 text-white px-2 py-0.5 rounded-full">Gemini</span>
           </div>
         </div>
       </div>
@@ -642,33 +616,21 @@ export default function ChatMessage() {
         )}
       </AnimatePresence>
 
-      {/* API Selection for Mobile */}
+      {/* Mobile Gemini Model Selection - replacing API selection */}
       <div className="sm:hidden border-b border-gray-200 dark:border-gray-800 p-2 bg-gray-50 dark:bg-gray-800/50">
         <div className="flex items-center justify-between">
-          <div className="text-xs text-gray-600 dark:text-gray-400">AI Provider:</div>
+          <div className="text-xs text-gray-600 dark:text-gray-400">Gemini Model:</div>
           <div className="flex space-x-2">
             <select
-              value={selectedApi}
-              onChange={(e) => setSelectedApi(e.target.value)}
+              value={geminiModel}
+              onChange={(e) => setGeminiModel(e.target.value)}
               className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1"
               disabled={isLoading}
             >
-              <option value="openrouter">OpenRouter</option>
-              <option value="gemini">Gemini</option>
+              {geminiModels.map(model => (
+                <option key={model.id} value={model.id}>{model.name}</option>
+              ))}
             </select>
-
-            {selectedApi === 'gemini' && (
-              <select
-                value={geminiModel}
-                onChange={(e) => setGeminiModel(e.target.value)}
-                className="text-xs bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md px-2 py-1"
-                disabled={isLoading}
-              >
-                {geminiModels.map(model => (
-                  <option key={model.id} value={model.id}>{model.name}</option>
-                ))}
-              </select>
-            )}
           </div>
         </div>
       </div>

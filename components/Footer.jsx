@@ -52,7 +52,7 @@ export function Footer() {
                     <ul className="mt-4 space-y-2">
                         <li className="flex items-center space-x-2">
                             <FaEnvelope className="text-lg" />
-                            <a href="mailto:admin@kalangsaripride.social" className="hover:underline">{t('email')}</a>
+                            <a href="mailto:admin@tasikbersih.social" className="hover:underline">{t('email')}</a>
                         </li>
                         <li className="flex items-center space-x-2">
                             <FaPhone className="text-lg" />
